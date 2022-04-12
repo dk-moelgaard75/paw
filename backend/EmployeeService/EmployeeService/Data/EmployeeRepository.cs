@@ -41,6 +41,10 @@ namespace EmployeeService.Data
         {
             return _context.Employees.FirstOrDefault(p => p.Id == id);
         }
+        public Employee GetByEmail(string mail)
+        {
+            return _context.Employees.FirstOrDefault(p => p.Email.Equals(mail));
+        }
 
         public void Update(Employee modifiedEntity)
         {

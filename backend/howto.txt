@@ -1,0 +1,12 @@
+Ryd alle instanser af service i Docker Desktop (ie. EmployeeService, CommandService mm)
+Opsæt Postgres: 
+* Opret PVC (Persistant Volume Claim) via: kubectl apply -f local-pvc.yaml (kaldes fra D:\udv\paw\backend\Kubernetes\)
+* Initer Postgres via: kubectl apply -f postgres-plat-deply.yaml (kaldes fra D:\udv\paw\backend\Kubernetes\)
+
+Byg service - ie: docker build -t dkmoelgaard75/employeeservice -f "EmployeeService/Dockerfile" . (kaldes fra D:\udv\paw\backend\EmployeeService)
+Push til docker hub: docker push dkmoelgaard75/employeeservice
+Opsæt kubernettes: kubectl apply -f employee-depl.yaml (kaldes fra D:\udv\paw\backend\Kubernetes\)
+ 
+OBS OBS OBS
+Er Postgres startet efter employee-servicen, så genstart employee service med: 
+ 

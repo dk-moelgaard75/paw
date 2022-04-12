@@ -34,7 +34,10 @@ namespace EmployeeService
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "EmployeeService", Version = "v1" });
             });
-            services.AddDbContext<EmployeeDbContext>(opt => opt.UseNpgsql(Configuration["Data:CommandApiConnection:ConnectionString"]));
+            string con = Configuration["Data:CommandApiConnectionPod:ConnectionString"];
+            Console.WriteLine($"Employee service starting with connectionstring: {con}");
+            //services.AddDbContext<EmployeeDbContext>(opt => opt.UseNpgsql(con));
+            services.AddDbContext<EmployeeDbContext>(opt => opt.UseNpgsql(Configuration.GetConnectionString("DbConnection")));
             services.AddScoped<IEmployeeRepository, EmployeeRepository>();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         }

@@ -11,6 +11,7 @@ namespace EmployeeService.Data
 		int Create(Employee newEntity);
 		IEnumerable<Employee> GetAll();
 		Employee GetById(int id);
+		Employee GetByEmail(string email);
 		void Update(Employee modifiedEntity);
 		void Delete(Employee entityToDelete);
 	}

@@ -24,6 +24,7 @@ namespace EmployeeService.Controllers
         [HttpGet(Name="GetAll")]
         public ActionResult<IEnumerable<EmployeeGetDto>> GetAll()
         {
+            Console.WriteLine("Http GET recieved");
             IEnumerable<Employee> emps = _employeeRepository.GetAll();
             //return JsonSerializer.Serialize(emps);
             return Ok(_mapper.Map<IEnumerable<EmployeeGetDto>>(emps));
@@ -31,6 +32,7 @@ namespace EmployeeService.Controllers
         [HttpGet("{id}",Name="GetById")]
         public ActionResult<EmployeeGetDto> GetById(int id)
         {
+            Console.WriteLine($"Http GET recieved with ID: {id}");
             Employee emp = _employeeRepository.GetById(id);
             if (emp != null)
             {
@@ -43,20 +45,32 @@ namespace EmployeeService.Controllers
         [HttpPost]
         public ActionResult<EmployeeGetDto> Post(EmployeeCreateDto employeeCreateDto)
         {
+            Console.WriteLine($"Http POST recieved with data:");
+            Console.WriteLine($"{employeeCreateDto.FirstName}");
+            Console.WriteLine($"{employeeCreateDto.LastName}");
+            Console.WriteLine($"{employeeCreateDto.Email}");
             EmployeeGetDto epmloyeeDto = null;
             try
             {
                 //Map incomming DTO to a internal model object
-                var employeeModel = _mapper.Map<Employee>(employeeCreateDto);
-                
+                Employee employeeModel = _mapper.Map<Employee>(employeeCreateDto);
+                Console.WriteLine($"Employee model created:");
+                Console.WriteLine($"{employeeModel.FirstName}");
+                Console.WriteLine($"{employeeModel.LastName}");
+                Console.WriteLine($"{employeeModel.Email}");
+
+                //setting UID
+                employeeModel.UID = Guid.NewGuid();
+
                 //Use the internal model object to create a DbContext object
-                var createdEmployee = _employeeRepository.Create(employeeModel);
+                int createdEmployeeId = _employeeRepository.Create(employeeModel);
 
                 //Map the DbContext object to a DTO object (removing potential personal or otherwise sensitive data)
-                epmloyeeDto = _mapper.Map<EmployeeGetDto>(createdEmployee);
+                epmloyeeDto = _mapper.Map<EmployeeGetDto>(employeeModel);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine($"Http POST exception: {ex.Message}" );
                 return StatusCode(500);
             }
             //Return information afbout URI (name=GetByID - HttpGet), Id for URI, and the created DTO
@@ -64,20 +78,19 @@ namespace EmployeeService.Controllers
         }
         /* HttpPut checks if an instance exists - if so, the instance is updated - otherwise a new instance is created*/
         [HttpPut]
-        public void Put(Employee employee)
+        public void Put(EmployeeCreateDto employeeCreateDto)
         {
-            Employee emp = _employeeRepository.GetById(employee.Id);
+            Employee emp = _employeeRepository.GetByEmail(employeeCreateDto.Email);
             if (emp != null)
             {
-                //TODO - is this the right way? - could AutoMapper be used instead?
-                emp.FirstName = employee.FirstName;
-                emp.LastName = employee.LastName;
-                emp.Email = employee.Email;
+                //Map properties of src (first argument) to dest (second argument)
+                _mapper.Map(employeeCreateDto, emp);
                 _employeeRepository.Update(emp);
             }
             else
             {
-                _employeeRepository.Create(employee);
+                var employeeModel = _mapper.Map<Employee>(employeeCreateDto);
+                _employeeRepository.Create(employeeModel);
             }
         }
         [HttpDelete]
