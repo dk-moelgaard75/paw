@@ -43,8 +43,13 @@ namespace EmployeeService.Controllers
         }
         /* HttpPost creates new instance*/
         [HttpPost]
-        public ActionResult<EmployeeGetDto> Post(EmployeeCreateDto employeeCreateDto)
+        public ActionResult<EmployeeGetDto> Post([FromBody] EmployeeCreateDto employeeCreateDto)
         {
+            if (employeeCreateDto == null)
+            {
+                Console.WriteLine($"employeeCreateDto is null:");
+            }
+            //EmployeeCreateDto tmp = JsonSerializer.Deserialize<EmployeeCreateDto>(employeeCreateDto.ToString());
             Console.WriteLine($"Http POST recieved with data:");
             Console.WriteLine($"{employeeCreateDto.FirstName}");
             Console.WriteLine($"{employeeCreateDto.LastName}");

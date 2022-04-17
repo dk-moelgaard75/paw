@@ -2,11 +2,32 @@ Ryd alle instanser af service i Docker Desktop (ie. EmployeeService, CommandServ
 Opsæt Postgres: 
 * Opret PVC (Persistant Volume Claim) via: kubectl apply -f local-pvc.yaml (kaldes fra D:\udv\paw\backend\Kubernetes\)
 * Initer Postgres via: kubectl apply -f postgres-plat-deply.yaml (kaldes fra D:\udv\paw\backend\Kubernetes\)
+* Registrer som nodeport, hvis man skal tilgå db udefra: kubectl apply -f postgres-nodeport-srv.yaml
+	* se port mappingen via: kubectl get services -> kig efter postgres-nodeport-** - under ports vil der stå: 5432/XXXXX, hvor XXXXX er portnummeret ud ad til
 
 Byg service - ie: docker build -t dkmoelgaard75/employeeservice -f "EmployeeService/Dockerfile" . (kaldes fra D:\udv\paw\backend\EmployeeService)
-Push til docker hub: docker push dkmoelgaard75/employeeservice
+Push til docker hub:  docker push dkmoelgaard75/employeeservice
 Opsæt kubernettes: kubectl apply -f employee-depl.yaml (kaldes fra D:\udv\paw\backend\Kubernetes\)
  
 OBS OBS OBS
 Er Postgres startet efter employee-servicen, så genstart employee service med: 
+kubectl rollout restart deployment employee-depl (denne kommando trækker image´et fra docker hub)
+
+Aktiver ingress
+kubectl apply -f ingress-routing-srv.yaml (kaldes fra D:\udv\paw\backend\Kubernetes\) 
+
+Hvis der er bøvl med at forbinde med ingress, så prøv at sætte en nodeport op:
+kubectl apply -f employee-nodeport-srv.yaml (kaldes fra D:\udv\paw\backend\Kubernetes\)
+Se portmapping via:
+kubectl get services
+
+Hvis der er bøvl med ingress, så test med:
+kubectl get svc --all-namespaces
+Hvis ikke ingress er aktiv (ingress-nginx-controller og ingress-nginx-controller-admission), så kør:
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.1.1/deploy/static/provider/cloud/deploy.yaml
+
+
+
+
+ 
  

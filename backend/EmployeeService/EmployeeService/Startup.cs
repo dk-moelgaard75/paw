@@ -28,7 +28,7 @@ namespace EmployeeService
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
+            Console.WriteLine("Employee service start:" + DateTime.Now);
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
@@ -37,9 +37,27 @@ namespace EmployeeService
             string con = Configuration["Data:CommandApiConnectionPod:ConnectionString"];
             Console.WriteLine($"Employee service starting with connectionstring: {con}");
             //services.AddDbContext<EmployeeDbContext>(opt => opt.UseNpgsql(con));
-            services.AddDbContext<EmployeeDbContext>(opt => opt.UseNpgsql(Configuration.GetConnectionString("DbConnection")));
+            if (con != null)
+            {
+                services.AddDbContext<EmployeeDbContext>(opt => opt.UseNpgsql(con));
+            }
+            else
+            {
+                services.AddDbContext<EmployeeDbContext>(opt => opt.UseNpgsql(Configuration.GetConnectionString("DbConnection")));
+            }
             services.AddScoped<IEmployeeRepository, EmployeeRepository>();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(
+                    builder =>
+                    {
+                        builder.WithOrigins("http://localhost:4200")
+                                            .AllowAnyHeader()
+                                            .AllowAnyMethod()
+                                            .AllowCredentials();
+                    });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -51,10 +69,14 @@ namespace EmployeeService
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "EmployeeService v1"));
             }
-
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            //allow CORS call - according to https://www.c-sharpcorner.com/article/enable-cors-consume-web-api-by-mvc-in-net-core-4/
+            //UseCors should be placed after UseRouting and before UseAuthorization
+            //app.UseCors(options => options.AllowAnyOrigin());
+            app.UseCors();
 
             app.UseAuthorization();
 
