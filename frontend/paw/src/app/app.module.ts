@@ -5,12 +5,14 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { PawNavbarComponent } from './paw-navbar/paw-navbar.component';
 import { PawCustomerformComponent } from './paw-customerform/paw-customerform.component';
+import { PawEmployeeformComponent } from './paw-employeeform/paw-employeeform.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     PawNavbarComponent,
-    PawCustomerformComponent
+    PawCustomerformComponent,
+    PawEmployeeformComponent
   ],
   imports: [
     BrowserModule,

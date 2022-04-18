@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { PawCustomerformComponent } from '../paw-customerform/paw-customerform.component';
 
 @Component({
   selector: 'app-paw-navbar',

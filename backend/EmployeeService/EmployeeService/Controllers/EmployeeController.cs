@@ -78,8 +78,16 @@ namespace EmployeeService.Controllers
                 Console.WriteLine($"Http POST exception: {ex.Message}" );
                 return StatusCode(500);
             }
-            //Return information afbout URI (name=GetByID - HttpGet), Id for URI, and the created DTO
-            return CreatedAtRoute(nameof(GetById), new { Id = epmloyeeDto.Id }, epmloyeeDto);
+            //For testing purpose
+            if (employeeCreateDto.FirstName.Equals("John") && employeeCreateDto.FirstName.Equals("Doe"))
+            {
+                return StatusCode(500);
+            }
+            else
+            {
+                //Return information afbout URI (name=GetByID - HttpGet), Id for URI, and the created DTO
+                return CreatedAtRoute(nameof(GetById), new { Id = epmloyeeDto.Id }, epmloyeeDto);
+            }
         }
         /* HttpPut checks if an instance exists - if so, the instance is updated - otherwise a new instance is created*/
         [HttpPut]
