@@ -27,6 +27,7 @@ export class PawCustomerformComponent implements OnInit {
   currentFirstName(){
     return this.customerForm.get('firstname')!.value;
   }
+  
   get lastname() {
     return this.customerForm.get('firstname')!;
   }
@@ -34,4 +35,42 @@ export class PawCustomerformComponent implements OnInit {
     return this.customerForm.get('firstname')!.value;
   }
 
+  get email() {
+    return this.customerForm.get('email')!;
+  }
+  currentEmail() {
+    return this.customerForm.get('email')!.value;
+  }
+
+  get phone() {
+    return this.customerForm.get('phone')!;
+  }
+  currentPhone() {
+    return this.customerForm.get('phone')!.value;
+  }
+
+  get address() {
+    return this.customerForm.get('address')!;
+  }
+  currentAddress() {
+    return this.customerForm.get('address')!.value;
+  }
+  
+  get zip() {
+    return this.customerForm.get('zip')!;
+  }
+  currentZip() {
+    return this.customerForm.get('zip')!.value;
+  }
+
+  get country() {
+    return this.customerForm.get('country')!;
+  }
+  currentCountry() {
+    return this.customerForm.get('country')!.value;
+  }
+
+  createOrUpdateCustomer() {
+
+  }
 }
