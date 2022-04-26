@@ -47,6 +47,7 @@ namespace EmployeeService
             }
             services.AddScoped<IEmployeeRepository, EmployeeRepository>();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            /*
             services.AddCors(options =>
             {
                 options.AddDefaultPolicy(
@@ -58,6 +59,21 @@ namespace EmployeeService
                                             .AllowCredentials();
                     });
             });
+            */
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(
+                    builder =>
+                    {
+                        builder.WithOrigins("http://localhost:4200")
+                                            .AllowAnyHeader()
+                                            .AllowAnyMethod()
+                                            .AllowCredentials()
+                                            .WithExposedHeaders("Location");
+                    });
+            });
+
+            //
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

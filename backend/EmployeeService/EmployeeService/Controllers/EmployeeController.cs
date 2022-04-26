@@ -54,6 +54,8 @@ namespace EmployeeService.Controllers
             Console.WriteLine($"{employeeCreateDto.FirstName}");
             Console.WriteLine($"{employeeCreateDto.LastName}");
             Console.WriteLine($"{employeeCreateDto.Email}");
+            Console.WriteLine($"{employeeCreateDto.Phone}");
+            Console.WriteLine($"{employeeCreateDto.Password}");
             EmployeeGetDto epmloyeeDto = null;
             try
             {
@@ -63,6 +65,8 @@ namespace EmployeeService.Controllers
                 Console.WriteLine($"{employeeModel.FirstName}");
                 Console.WriteLine($"{employeeModel.LastName}");
                 Console.WriteLine($"{employeeModel.Email}");
+                Console.WriteLine($"{employeeModel.Phone}");
+                Console.WriteLine($"{employeeModel.Password}");
 
                 //setting UID
                 employeeModel.UID = Guid.NewGuid();
@@ -91,26 +95,47 @@ namespace EmployeeService.Controllers
         }
         /* HttpPut checks if an instance exists - if so, the instance is updated - otherwise a new instance is created*/
         [HttpPut]
-        public void Put(EmployeeCreateDto employeeCreateDto)
+        public IActionResult Put([FromBody] EmployeeCreateDto employeeCreateDto)
         {
+            Console.WriteLine($"Http PUT recieved with data:");
+            Console.WriteLine($"{employeeCreateDto.Email}");
+
             Employee emp = _employeeRepository.GetByEmail(employeeCreateDto.Email);
-            if (emp != null)
+            try
             {
-                //Map properties of src (first argument) to dest (second argument)
-                _mapper.Map(employeeCreateDto, emp);
-                _employeeRepository.Update(emp);
+                if (emp != null)
+                {
+                    Console.WriteLine($"Found employee based on email:" + employeeCreateDto.Email);
+                    //Map properties of src (first argument) to dest (second argument)
+                    _mapper.Map(employeeCreateDto, emp);
+                    _employeeRepository.Update(emp);
+                }
+                else
+                {
+                    var employeeModel = _mapper.Map<Employee>(employeeCreateDto);
+                    _employeeRepository.Create(employeeModel);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                var employeeModel = _mapper.Map<Employee>(employeeCreateDto);
-                _employeeRepository.Create(employeeModel);
+                Console.WriteLine("Error in EmployeeControler - Put:" + ex.Message);
+                return StatusCode(500);
             }
+            return Ok();
         }
-        [HttpDelete]
-        public void Delete(Employee employee)
+        [HttpDelete("{emplId:int}")]
+        public IActionResult Delete(int emplId)
         {
-            _employeeRepository.Delete(employee);
-        }
+            Console.WriteLine("EmployeeController - Delete hit with ID:" + emplId);
+            Employee empl = _employeeRepository.GetById(emplId);
+            if (empl != null)
+            {
+                _employeeRepository.Delete(empl);
+                return Ok();
+            }
+            return NotFound();
+            
+        } 
 
     }
 }
