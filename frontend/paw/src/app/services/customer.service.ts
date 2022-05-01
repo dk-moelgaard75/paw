@@ -11,7 +11,8 @@ import { Icu } from '@angular/compiler/src/i18n/i18n_ast';
   providedIn: 'root'
 })
 export class CustomerService {
-  apiURL = 'http://acme.com/api';
+  //apiURL = 'http://acme.com/api';
+  apiURL = 'https://localhost:44316/api';
   constructor(private http: HttpClient) { }
 
   httpOptions = {
@@ -22,7 +23,7 @@ export class CustomerService {
     // HttpClient API get() method => Fetch employees list
   getCustomers(): Observable<HttpResponse<ICustomer[]>> {
     return this.http.get<ICustomer[]>(
-      this.apiURL + '/customer',
+      this.apiURL + '/customer', 
       {observe: 'response'})
       .pipe(retry(1), catchError(this.handleError)); 
   }

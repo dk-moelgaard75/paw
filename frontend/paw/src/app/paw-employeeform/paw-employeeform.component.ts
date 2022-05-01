@@ -5,7 +5,7 @@ import { FormGroup, Validators } from '@angular/forms';
 import { FormControl } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClient, HttpParams, HttpHeaders,HttpResponse,HttpEvent, HttpEventType } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, throwIfEmpty } from 'rxjs';
 import { EmployeeService } from '../services/employee.service';
 import { PawNavbarComponent} from '../paw-navbar/paw-navbar.component'
 
@@ -31,7 +31,7 @@ export class PawEmployeeComponent implements OnInit {
   private httpHeaders: HttpHeaders = new HttpHeaders;
   private httpKeys: string[] = [];
   private curEmployeeId : number = 0;
-  private editMode : boolean = false;
+  private _inEditMode : boolean = false;
 
   constructor(emplService: EmployeeService) { 
     console.log("Constructor")
@@ -44,7 +44,7 @@ export class PawEmployeeComponent implements OnInit {
     this.getEmployeesWithHeaders();
   }
   
-  //setting ! after .get('') disables the null check. It´s ok since there is validation on all fields
+  //setting ! after .get('') disables the null check. It´s ok since there are validation on all fields
   get firstname() {
     return this.employeeForm.get('firstname')!;
   }
@@ -84,8 +84,8 @@ export class PawEmployeeComponent implements OnInit {
     return this.serviceStatus;
 
   }
-  get curEditMode() {
-    return this.editMode;
+  get inEditMode() {
+    return this._inEditMode;
   }
 
   getEmployees() {
@@ -103,13 +103,13 @@ export class PawEmployeeComponent implements OnInit {
    }); 
   } 
   createOrUpdateEmployee() {
-    console.log('createOrUpdateEmployee kaldt - editMode:' + this.editMode);
+    console.log('createOrUpdateEmployee kaldt - editMode:' + this._inEditMode);
     let post = {'firstName': this.currentFirstName(), 
                 'lastName': this.currentLastName(), 
                 'email': this.currentEmail(), 
                 'phone': this.currentPhone(),
                 'password': this.currentPassword()} as IEmployee
-    if (!this.editMode) {
+    if (!this._inEditMode) {
       this.employeeService.createEmployeeWithHeaders(post).subscribe((response: HttpResponse<IEmployee>)=> {
         if (response != null && response.ok)
         {
@@ -128,6 +128,8 @@ export class PawEmployeeComponent implements OnInit {
       this.employeeService.updateEmployeeWithHeader(this.curEmployeeId,post).subscribe((response: HttpResponse<IEmployee>) => {
         if (response.ok) {
           this.serviceStatus = "Brugeren opdateret";
+          this.employees = [];
+          this.getEmployees();
         }
         else {
           this.serviceStatus = "Fejl opstået:" + response.statusText;
@@ -135,8 +137,8 @@ export class PawEmployeeComponent implements OnInit {
 
       })
     }
-    this.editMode = false;
     this.clearFormsData();
+    this._inEditMode = false; 
   }
   deleteEmployee(id: number) {    
     this.employeeService.deleteEmployee(id).subscribe(response => {
@@ -147,7 +149,7 @@ export class PawEmployeeComponent implements OnInit {
   editEmployee(id: number) {
     this.serviceStatus = "Klar til at opdatere medarbejder";
     this.employeeService.getEmployee(id).subscribe(response => {
-      this.editMode = true;
+      this._inEditMode = true;
       this.firstname.setValue(response.firstName);
       this.lastname.setValue(response.lastName);
       this.email.setValue(response.email);
@@ -158,7 +160,7 @@ export class PawEmployeeComponent implements OnInit {
   }
   setEditModeFalse() {  
     this.clearFormsData();
-    this.editMode = false;
+    this._inEditMode = false;
   }
   clearFormsData() {
     this.firstname.setValue("");
@@ -166,6 +168,8 @@ export class PawEmployeeComponent implements OnInit {
     this.email.setValue("");
     this.phone.setValue("");
     this.password.setValue("");
+    //Ensures that the validators are not triggered by clearing thme
+    this.employeeForm.markAsUntouched()
 
   }
 }

@@ -12,7 +12,7 @@
                             id="firstname" 
                             type="text" 
                             class="form-control">
-                            <div *ngIf="firstname?.touched && firstname?.invalid" class="alert alert-danger">
+                            <div *ngIf="!inEditMode && firstname?.touched && firstname?.invalid" class="alert alert-danger">
                                 <div *ngIf="firstname?.errors?.['required']" >Fornavn skal angives</div>
                             </div>
                     </div>
@@ -23,7 +23,7 @@
                             id="lastname" 
                             type="text" 
                             class="form-control">
-                            <div *ngIf="lastname?.touched && lastname?.invalid" class="alert alert-danger">
+                            <div *ngIf="!inEditMode && lastname?.touched && lastname?.invalid" class="alert alert-danger">
                                 <div *ngIf="lastname?.errors?.['required']" >Efternavn skal angives</div>
                             </div>
                     </div>
@@ -34,7 +34,7 @@
                             id="email" 
                             type="text" 
                             class="form-control">
-                            <div *ngIf="email?.touched && email?.invalid" class="alert alert-danger">
+                            <div *ngIf="!inEditMode && email?.touched && email?.invalid" class="alert alert-danger">
                                 <div *ngIf="email?.errors?.['required']" >Email skal angives</div>
                             </div>
                     </div>
@@ -45,7 +45,7 @@
                             id="phone" 
                             type="text" 
                             class="form-control">
-                            <div *ngIf="phone?.touched && phone?.invalid" class="alert alert-danger">
+                            <div *ngIf="!inEditMode && phone?.touched && phone?.invalid" class="alert alert-danger">
                                 <div *ngIf="phone?.errors?.['required']" >Telefon skal angives</div>
                             </div>
                     </div>
@@ -56,15 +56,15 @@
                             id="password" 
                             type="text" 
                             class="form-control">
-                            <div *ngIf="password?.touched && password?.invalid" class="alert alert-danger">
+                            <div *ngIf="!inEditMode && password?.touched && password?.invalid" class="alert alert-danger">
                                 <div *ngIf="password?.errors?.['required']" >Kodeordet skal angives</div>
                             </div>
                     </div>
                     <br />
-                    <div *ngIf="!curEditMode">
+                    <div *ngIf="!inEditMode">
                         <button class="btn btn-primary btn-sm" type="submit">Opret medarbejder</button>
                     </div>
-                    <div *ngIf="curEditMode">
+                    <div *ngIf="inEditMode">
                         <button class="btn btn-primary btn-sm" type="submit">Opdater medarbejder</button>
                         <button class="btn btn-primary btn-sm mx-2" type="button" (click)="setEditModeFalse()">Afbryd</button>
                     </div>
