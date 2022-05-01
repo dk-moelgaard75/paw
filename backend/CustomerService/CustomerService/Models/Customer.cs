@@ -22,7 +22,7 @@ namespace CustomerService.Models
         public string Phone { get; set; }
         public string Address { get; set; }
         public int Zip { get; set; }
-        public int Country { get; set; }
+        public string Country { get; set; }
 
         public Guid UID { get; set; }
     }

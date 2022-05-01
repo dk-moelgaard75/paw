@@ -1,7 +1,9 @@
+using CustomerService.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -26,12 +28,25 @@ namespace CustomerService
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
+            Console.WriteLine("Customer service start:" + DateTime.Now);
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "CustomerService", Version = "v1" });
             });
+            string con = Configuration["Data:CommandApiConnection:ConnectionString"];
+            Console.WriteLine($"Customer service starting with connectionstring: {con}");
+            if (con != null)
+            {
+                services.AddDbContext<CustomerDbContext>(opt => opt.UseNpgsql(con));
+            }
+            else
+            {
+                services.AddDbContext<CustomerDbContext>(opt => opt.UseNpgsql(Configuration.GetConnectionString("DbConnection")));
+            }
+            services.AddScoped<ICustomerRepository, CustomerRepository>();
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
