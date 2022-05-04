@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TaskService.Data
 {
-    interface ITaksObjRepository
+    public interface ITaskObjRepository
     {
 		int Create(TaskObject newEntity);
 		IEnumerable<TaskObject> GetAll();

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -11,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TaskService.Data;
 
 namespace TaskService
 {
@@ -32,6 +34,32 @@ namespace TaskService
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "TaskService", Version = "v1" });
             });
+            string con = Configuration["Data:CommandApiConnection:ConnectionString"];
+            Console.WriteLine($"Customer service starting with connectionstring: {con}");
+            if (con != null)
+            {
+                services.AddDbContext<TaskObjDbContext>(opt => opt.UseNpgsql(con));
+            }
+            else
+            {
+                services.AddDbContext<TaskObjDbContext>(opt => opt.UseNpgsql(Configuration.GetConnectionString("DbConnection")));
+            }
+
+            services.AddScoped<ITaskObjRepository, TaskObjRepository>();
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(
+                    builder =>
+                    {
+                        builder.WithOrigins("http://localhost:4200")
+                                            .AllowAnyHeader()
+                                            .AllowAnyMethod()
+                                            .AllowCredentials()
+                                            .WithExposedHeaders("Location");
+                    });
+            });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -47,6 +75,12 @@ namespace TaskService
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            //allow CORS call - according to https://www.c-sharpcorner.com/article/enable-cors-consume-web-api-by-mvc-in-net-core-4/
+            //UseCors should be placed after UseRouting and before UseAuthorization
+            //app.UseCors(options => options.AllowAnyOrigin());
+            app.UseCors();
+
 
             app.UseAuthorization();
 

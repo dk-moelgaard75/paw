@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace TaskService.Data
 {
-    public class TaskDbContext : DbContext
+    public class TaskObjDbContext : DbContext
     {
-        public TaskDbContext(DbContextOptions<TaskDbContext> options) : base(options)
+        public TaskObjDbContext(DbContextOptions<TaskObjDbContext> options) : base(options)
         {
             Database.Migrate();
         }
