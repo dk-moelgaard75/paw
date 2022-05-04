@@ -22,7 +22,7 @@ export class PawCustomerformComponent implements OnInit {
   });
   
   public customers: ICustomer[] = [];
-  private editMode : boolean = false;
+  private _inEditMode : boolean = false;
   private serviceStatus: string = "N/A";
   private customerService : CustomerService;
   private curCustomerId : number = 0;
@@ -33,6 +33,7 @@ export class PawCustomerformComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.getCustomers();
   }
   
   get firstname() {
@@ -43,10 +44,10 @@ export class PawCustomerformComponent implements OnInit {
   }
   
   get lastname() {
-    return this.customerForm.get('firstname')!;
+    return this.customerForm.get('lastname')!;
   }
-  currentLastName(){
-    return this.customerForm.get('firstname')!.value;
+  currentLastName() {
+    return this.customerForm.get('lastname')!.value;
   }
 
   get email() {
@@ -83,17 +84,34 @@ export class PawCustomerformComponent implements OnInit {
   currentCountry() {
     return this.customerForm.get('country')!.value;
   }
+  get inEditMode() {
+    return this._inEditMode;
+  }
 
+  getStatusLabel() {
+    return this.serviceStatus;
+  }
+
+  getCustomers() {
+    this.customerService.getCustomers().subscribe((data: ICustomer[]) => {
+      
+      this.customers.splice(0);
+      this.customers = [... data];
+      //look at: https://stackoverflow.com/questions/45239739/angular2-ngfor-does-not-update-when-array-is-updated
+      console.log("getCustomers returned:" + this.customers.length)
+    });
+  }
+ 
   createOrUpdateCustomer() {
-    console.log('createOrUpdateEmployee kaldt - editMode:' + this.editMode);
+    console.log('createOrUpdateEmployee kaldt - editMode:' + this._inEditMode);
     let post = {'firstName': this.currentFirstName(), 
                 'lastName': this.currentLastName(), 
                 'email': this.currentEmail(), 
                 'phone': this.currentPhone(),
                 'address': this.currentAddress(),
-                'zip': this.currentAddress(),
+                'zip': this.currentZip(),
                 'country': this.currentCountry()} as ICustomer
-    if (!this.editMode) {
+    if (!this._inEditMode) {
       this.customerService.createCustomer(post).subscribe((response: HttpResponse<ICustomer>)=> {
         if (response != null && response.ok)
         {
@@ -119,13 +137,19 @@ export class PawCustomerformComponent implements OnInit {
 
       })
     }
-
-
+    this.getCustomers();
   }
-  editEmployee(id: number) {
+  deleteCustomer(id: number) {    
+    this.customerService.deleteCustomer(id).subscribe(response => {
+      console.log("Delete response", response)
+      this.getCustomers();
+    }) 
+  }
+
+  editCustomer(id: number) {
     this.serviceStatus = "Klar til at opdatere medarbejder";
     this.customerService.getCustomer(id).subscribe(response => {
-      this.editMode = true;
+      this._inEditMode = true;
       this.firstname.setValue(response.firstName);
       this.lastname.setValue(response.lastName);
       this.email.setValue(response.email);
@@ -136,5 +160,20 @@ export class PawCustomerformComponent implements OnInit {
 
     })
   }
+  setEditModeFalse() {  
+    this.clearFormsData();
+    this._inEditMode = false;
+  }
+  clearFormsData() {
+    this.firstname.setValue("");
+    this.lastname.setValue("");
+    this.email.setValue("");
+    this.phone.setValue("");
+    this.address.setValue("");
+    this.zip.setValue("");
+    this.country.setValue("");
+    //Ensures that the validators are not triggered by clearing thme
+    this.customerForm.markAsUntouched()
 
+  }
 }

@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-employee
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres-employee
+  template:
+    metadata:
+      labels:
+        app: postgres-employee
+    spec:
+      containers:
+        - name: postgres-employee
+          image: postgres:10.1
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: employee
+            - name: POSTGRES_USER
+              value: mendix
+            - name: POSTGRES_PASSWORD
+              value: mendix
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/employee/data
+              name: postgres-pv-claim
+      volumes:
+      - name: postgres-pv-claim
+        persistentVolumeClaim:
+          claimName: postgres-pv-claim
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-employee-clusterip-srv
+spec:
+  type: ClusterIP
+  selector:
+    app: postgres-employee
+  ports:
+  - name: postgres-employee
+    protocol: TCP
+    port: 5432
+    targetPort: 5432 

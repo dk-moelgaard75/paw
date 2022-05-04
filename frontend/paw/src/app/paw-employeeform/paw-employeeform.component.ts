@@ -100,7 +100,7 @@ export class PawEmployeeComponent implements OnInit {
       
       this.httpHeaders = response.headers;
 
-   }); 
+   });  
   } 
   createOrUpdateEmployee() {
     console.log('createOrUpdateEmployee kaldt - editMode:' + this._inEditMode);
@@ -134,7 +134,6 @@ export class PawEmployeeComponent implements OnInit {
         else {
           this.serviceStatus = "Fejl opstået:" + response.statusText;
         }
-
       })
     }
     this.clearFormsData();

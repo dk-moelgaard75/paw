@@ -1,47 +1,47 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: postgres
+  name: postgres-customer
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: postgres
+      app: postgres-customer
   template:
     metadata:
       labels:
-        app: postgres
+        app: postgres-customer
     spec:
       containers:
-        - name: postgres
+        - name: postgres-customer
           image: postgres:10.1
           ports:
             - containerPort: 5432
           env:
             - name: POSTGRES_DB
-              value: db0
+              value: customer
             - name: POSTGRES_USER
               value: mendix
             - name: POSTGRES_PASSWORD
               value: mendix
           volumeMounts:
-            - mountPath: /var/opt/postgresql/data
-              name: postgresdb
+            - mountPath: /var/lib/postgresql/customer/data
+              name: postgres-pv-claim
       volumes:
-      - name: postgresdb
+      - name: postgres-pv-claim
         persistentVolumeClaim:
-          claimName: postgres-claim
+          claimName: postgres-pv-claim
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: postgres-clusterip-srv
+  name: postgres-customer-clusterip-srv
 spec:
   type: ClusterIP
   selector:
-    app: postgres
+    app: postgres-customer
   ports:
-  - name: postgres
+  - name: postgres-customer
     protocol: TCP
     port: 5432
     targetPort: 5432 

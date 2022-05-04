@@ -44,9 +44,12 @@ namespace CustomerService.Controllers
         [HttpPost]
         public ActionResult<CustomerGetDto> Post([FromBody] CustomerCreateDto customerCreateDto)
         {
+            System.Diagnostics.Debug.WriteLine("CustomerService - post");
             if (customerCreateDto == null)
             {
-                Console.WriteLine($"CustomerCreateDto is null:");
+                //Console.WriteLine($"CustomerCreateDto is null:");
+
+                return StatusCode(500);
             }
             //EmployeeCreateDto tmp = JsonSerializer.Deserialize<EmployeeCreateDto>(employeeCreateDto.ToString());
             Console.WriteLine($"Http POST recieved with data:");

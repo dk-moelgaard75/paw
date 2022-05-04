@@ -46,6 +46,18 @@ namespace CustomerService
             }
             services.AddScoped<ICustomerRepository, CustomerRepository>();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(
+                    builder =>
+                    {
+                        builder.WithOrigins("http://localhost:4200")
+                                            .AllowAnyHeader()
+                                            .AllowAnyMethod()
+                                            .AllowCredentials()
+                                            .WithExposedHeaders("Location");
+                    });
+            });
 
         }
 
@@ -62,6 +74,11 @@ namespace CustomerService
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            //allow CORS call - according to https://www.c-sharpcorner.com/article/enable-cors-consume-web-api-by-mvc-in-net-core-4/
+            //UseCors should be placed after UseRouting and before UseAuthorization
+            //app.UseCors(options => options.AllowAnyOrigin());
+            app.UseCors();
 
             app.UseAuthorization();
 

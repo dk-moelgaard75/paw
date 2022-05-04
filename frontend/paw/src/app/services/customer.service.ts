@@ -21,10 +21,9 @@ export class CustomerService {
     }),
   };
     // HttpClient API get() method => Fetch employees list
-  getCustomers(): Observable<HttpResponse<ICustomer[]>> {
+  getCustomers(): Observable<ICustomer[]> {
     return this.http.get<ICustomer[]>(
-      this.apiURL + '/customer', 
-      {observe: 'response'})
+      this.apiURL + '/customer')
       .pipe(retry(1), catchError(this.handleError)); 
   }
   getCustomer(id: any): Observable<ICustomer> {
