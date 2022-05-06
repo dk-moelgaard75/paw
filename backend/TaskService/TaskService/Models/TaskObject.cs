@@ -21,7 +21,7 @@ namespace TaskService.Models
         public DateTime StartDate { get; set; }
         [Required]
         public int EstimatedDays { get; set; }
-        [Required]
+        
         public DateTime EndDate { get; set; }
         [Required]
         public Guid CustomerGuid { get; set; }

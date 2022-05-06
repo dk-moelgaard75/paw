@@ -5,13 +5,22 @@ Opsæt Postgres:
 * Registrer som nodeport, hvis man skal tilgå db udefra: kubectl apply -f postgres-nodeport-srv.yaml
 	* se port mappingen via: kubectl get services -> kig efter postgres-nodeport-** - under ports vil der stå: 5432/XXXXX, hvor XXXXX er portnummeret ud ad til
 
-Byg service - ie: docker build -t dkmoelgaard75/employeeservice -f "EmployeeService/Dockerfile" . (kaldes fra D:\udv\paw\backend\EmployeeService)
-Push til docker hub:  docker push dkmoelgaard75/employeeservice
-Opsæt kubernettes: kubectl apply -f employee-depl.yaml (kaldes fra D:\udv\paw\backend\Kubernetes\)
+Byg service - ie: 		docker build -t dkmoelgaard75/employeeservice -f "EmployeeService/Dockerfile" . (kaldes fra D:\udv\paw\backend\EmployeeService)
+						docker build -t dkmoelgaard75/customerservice -f "CustomerService/Dockerfile" .
+						docker build -t dkmoelgaard75/taskservice -f "TaskService/Dockerfile" .
+Push til docker hub:  	docker push dkmoelgaard75/employeeservice
+						docker push dkmoelgaard75/customerservice
+						docker push dkmoelgaard75/taskservice
+						
+Opsæt kubernettes: 		kubectl apply -f deploy-employee.yaml (kaldes fra D:\udv\paw\backend\Kubernetes\)
+						kubectl apply -f deploy-customer.yaml
+						kubectl apply -f deploy-task.yaml
  
 OBS OBS OBS
 Er Postgres startet efter employee-servicen, så genstart employee service med: 
 kubectl rollout restart deployment employee-depl (denne kommando trækker image´et fra docker hub)
+kubectl rollout restart deployment customer-depl 
+kubectl rollout restart deployment task-depl 
 
 Aktiver ingress
 kubectl apply -f ingress-routing-srv.yaml (kaldes fra D:\udv\paw\backend\Kubernetes\) 

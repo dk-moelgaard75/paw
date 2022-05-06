@@ -1,31 +1,31 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: postgres-customer
+  name: postgres-taskobj
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: postgres-customer
+      app: postgres-taskobj
   template:
     metadata:
       labels:
-        app: postgres-customer
+        app: postgres-taskobj
     spec:
       containers:
-        - name: postgres-customer
+        - name: postgres-taskobj
           image: postgres:10.1
           ports:
             - containerPort: 5432
           env:
             - name: POSTGRES_DB
-              value: customer
+              value: taskobj
             - name: POSTGRES_USER
-              value: customer
+              value: taskobj
             - name: POSTGRES_PASSWORD
-              value: customer
+              value: taskobj
           volumeMounts:
-            - mountPath: /var/lib/postgresql/customer/data
+            - mountPath: /var/lib/postgresql/taskobj/data
               name: postgres-pv-claim
       volumes:
       - name: postgres-pv-claim
@@ -35,13 +35,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: postgres-customer-clusterip-srv
+  name: postgres-taskobj-clusterip-srv
 spec:
   type: ClusterIP
   selector:
-    app: postgres-customer
+    app: postgres-taskobj
   ports:
-  - name: postgres-customer
+  - name: postgres-taskobj
     protocol: TCP
     port: 5432
     targetPort: 5432 

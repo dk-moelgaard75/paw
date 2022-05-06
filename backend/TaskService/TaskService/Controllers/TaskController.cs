@@ -24,7 +24,7 @@ namespace TaskService.Controllers
         [HttpGet(Name = "GetAll")]
         public ActionResult<IEnumerable<TaskObjGetDto>> GetAll()
         {
-            Console.WriteLine("Http GET recieved");
+            Console.WriteLine("TaskService - Http GET recieved");
             IEnumerable<TaskObject> tasks = _taskObjRepository.GetAll();
             //return JsonSerializer.Serialize(emps);
             return Ok(_mapper.Map<IEnumerable<TaskObjGetDto>>(tasks));
@@ -32,7 +32,7 @@ namespace TaskService.Controllers
         [HttpGet("{id}", Name = "GetById")]
         public ActionResult<TaskObjGetDto> GetById(int id)
         {
-            Console.WriteLine($"Http GET recieved with ID: {id}");
+            Console.WriteLine($"TaskService - Http GET recieved with ID: {id}");
             TaskObject task = _taskObjRepository.GetById(id);
             if (task != null)
             {

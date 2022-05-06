@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: task-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: taskservice
+  template:
+    metadata:
+      labels:
+        app: taskservice
+    spec:
+      containers:
+        - name: taskservice
+          image: dkmoelgaard75/taskservice:latest
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: task-clusterip-srv
+spec:
+  type: ClusterIP
+  selector:
+    app: taskservice
+  ports:
+  - name: taskservice
+    protocol: TCP
+    port: 80
+    targetPort: 80

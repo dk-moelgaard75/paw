@@ -21,9 +21,9 @@ spec:
             - name: POSTGRES_DB
               value: employee
             - name: POSTGRES_USER
-              value: mendix
+              value: employee
             - name: POSTGRES_PASSWORD
-              value: mendix
+              value: employee
           volumeMounts:
             - mountPath: /var/lib/postgresql/employee/data
               name: postgres-pv-claim

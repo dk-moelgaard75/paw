@@ -28,14 +28,14 @@ namespace TaskService
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
+            Console.WriteLine("Task service start:" + DateTime.Now);
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "TaskService", Version = "v1" });
             });
             string con = Configuration["Data:CommandApiConnection:ConnectionString"];
-            Console.WriteLine($"Customer service starting with connectionstring: {con}");
+            Console.WriteLine($"Task service starting with connectionstring: {con}");
             if (con != null)
             {
                 services.AddDbContext<TaskObjDbContext>(opt => opt.UseNpgsql(con));

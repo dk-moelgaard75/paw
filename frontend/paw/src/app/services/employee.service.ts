@@ -27,15 +27,9 @@ export class EmployeeService {
       'Content-Type': 'application/json',
     }),
   };
-  httpPostOption = {
-    headers: new HttpHeaders({
-      'Content-Type':  'application/json'
-    }),
-    observe: 'response'
-  };
-  httpPostOptionTwo = {headers: new HttpHeaders({'Content-Type':  'application/json'}),observe: 'response'};
 
-  // HttpClient API get() method => Fetch employees list
+
+  // HttpClient API get() method => Fetch employeeslist
   getEmployees(): Observable<IEmployee[]> {
     return this.http
       .get<IEmployee[]>(this.apiURL + '/employee')
@@ -65,24 +59,6 @@ export class EmployeeService {
       )
       .pipe(retry(1), catchError(this.handleError));
   }
-  /*
-  createEmployeeWithHeaders(employee: IEmployee): Observable<HttpResponse<IEmployee>> {
-    return this.http
-      .post<IEmployee>(
-        this.apiURL + '/employee',
-        JSON.stringify(employee),
-        {observe: 'response'}
-      ).pipe(catchError(this.handleError));
-  }
-  createEmployeeWithHeadersTwo(employee: IEmployee): Observable<HttpResponse<IEmployee>> {
-    return this.http
-      .post<IEmployee>(
-        this.apiURL + '/employee',
-        employee,
-        this.httpPostOptionTwo
-      ).pipe(catchError(this.handleError));
-  }
-  */
 
   createEmployeeWithHeaders(employee: IEmployee): Observable<HttpResponse<IEmployee>> {
     return this.http

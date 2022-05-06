@@ -24,7 +24,7 @@ namespace EmployeeService.Controllers
         [HttpGet(Name="GetAll")]
         public ActionResult<IEnumerable<EmployeeGetDto>> GetAll()
         {
-            Console.WriteLine("Http GET recieved");
+            Console.WriteLine("EmployeeService - Http GET recieved");
             IEnumerable<Employee> emps = _employeeRepository.GetAll();
             //return JsonSerializer.Serialize(emps);
             return Ok(_mapper.Map<IEnumerable<EmployeeGetDto>>(emps));
@@ -32,7 +32,7 @@ namespace EmployeeService.Controllers
         [HttpGet("{id}",Name="GetById")]
         public ActionResult<EmployeeGetDto> GetById(int id)
         {
-            Console.WriteLine($"Http GET recieved with ID: {id}");
+            Console.WriteLine($"EmployeeService - Http GET recieved with ID: {id}");
             Employee emp = _employeeRepository.GetById(id);
             if (emp != null)
             {

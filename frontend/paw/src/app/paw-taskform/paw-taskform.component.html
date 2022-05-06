@@ -1,0 +1,19 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-2 justify-content-around">
+            <app-paw-navbar></app-paw-navbar>
+        </div>
+        <div class="col-8 mainpadding">
+                <form [formGroup]="taskForm" (ngSubmit)="createOrUpdateTask()">  
+                    <div class="form-group">
+                        <label for="taskname">Opgave</label>
+                        <input 
+                            formControlName="taskname"
+                            id="taskname" 
+                            type="text" 
+                            class="form-control">
+                            <div *ngIf="!inEditMode && taskname?.touched && taskname?.invalid" class="alert alert-danger">
+                                <div *ngIf="taskname?.errors?.['required']" >Opgaven skal have en title</div>
+                            </div>
+                    </div>
+
