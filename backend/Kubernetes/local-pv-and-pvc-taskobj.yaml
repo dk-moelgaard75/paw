@@ -1,0 +1,31 @@
+#https://medium.com/@xcoulon/storing-data-into-persistent-volumes-on-kubernetes-fb155da16666
+#Execute like:
+#kubectl apply -f local-pv-and-pvc.yaml
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: postgres-taskobj-pv
+  labels:
+    type: local
+spec:
+  storageClassName: hostpath
+  capacity:
+    storage: 100M
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: "/mnt/data/taskobj"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    app: postgres-taskobj-pvc
+  name: postgres-taskobj-pv-claim
+spec:
+  storageClassName: hostpath
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 200M

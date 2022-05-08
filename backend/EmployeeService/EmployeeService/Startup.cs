@@ -1,3 +1,4 @@
+using EmployeeService.AsyncDataServices;
 using EmployeeService.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -29,6 +30,10 @@ namespace EmployeeService
         public void ConfigureServices(IServiceCollection services)
         {
             Console.WriteLine("Employee service start:" + DateTime.Now);
+
+            //RabbitMQ
+            services.AddSingleton<IMessageBusClient, MessageBusClient>();
+
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {

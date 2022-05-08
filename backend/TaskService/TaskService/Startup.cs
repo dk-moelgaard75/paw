@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TaskService.AsyncDataServices;
 using TaskService.Data;
 
 namespace TaskService
@@ -29,6 +30,7 @@ namespace TaskService
         public void ConfigureServices(IServiceCollection services)
         {
             Console.WriteLine("Task service start:" + DateTime.Now);
+            services.AddSingleton<IMessageBusClient, MessageBusClient>();
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {

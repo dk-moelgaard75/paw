@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams, HttpHeaders,HttpResponse,HttpEvent, HttpEventType } from '@angular/common/http';
 import { ICustomer } from './../shared/ICustomer';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { CustomerService } from '../services/customer.service';
 
@@ -28,7 +28,7 @@ export class PawCustomerformComponent implements OnInit {
   private curCustomerId : number = 0;
 
 
-  constructor(custService: CustomerService) { 
+  constructor(custService: CustomerService,private changeDetection: ChangeDetectorRef) { 
     this.customerService = custService;
   }
 
@@ -94,11 +94,10 @@ export class PawCustomerformComponent implements OnInit {
 
   getCustomers() {
     this.customerService.getCustomers().subscribe((data: ICustomer[]) => {
-      
       this.customers.splice(0);
       this.customers = [... data];
-      //look at: https://stackoverflow.com/questions/45239739/angular2-ngfor-does-not-update-when-array-is-updated
-      console.log("getCustomers returned:" + this.customers.length)
+      //Based on https://stackoverflow.com/questions/45239739/angular2-ngfor-does-not-update-when-array-is-updated
+      this.changeDetection.detectChanges();
     });
   }
  
@@ -138,6 +137,7 @@ export class PawCustomerformComponent implements OnInit {
       })
     }
     this.getCustomers();
+    
   }
   deleteCustomer(id: number) {    
     this.customerService.deleteCustomer(id).subscribe(response => {

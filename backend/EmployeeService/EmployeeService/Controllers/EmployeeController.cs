@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using EmployeeService.AsyncDataServices;
 using EmployeeService.Data;
 using EmployeeService.DTOs;
 using EmployeeService.Models;
@@ -16,10 +17,15 @@ namespace EmployeeService.Controllers
     {
         private readonly IEmployeeRepository _employeeRepository;
         private readonly IMapper _mapper;
-        public EmployeeController(IEmployeeRepository employeeRepository, IMapper mapper)
+        private readonly IMessageBusClient _messageBusClient;
+
+        public EmployeeController(IEmployeeRepository employeeRepository, 
+                                    IMapper mapper,
+                                    IMessageBusClient msgBusClient)
         {
             _employeeRepository = employeeRepository;
             _mapper = mapper;
+            _messageBusClient = msgBusClient;
         }
         [HttpGet(Name="GetAll")]
         public ActionResult<IEnumerable<EmployeeGetDto>> GetAll()
@@ -81,6 +87,16 @@ namespace EmployeeService.Controllers
             {
                 Console.WriteLine($"Http POST exception: {ex.Message}" );
                 return StatusCode(500);
+            }
+            try
+            {
+                System.Diagnostics.Debug.Print("RabbitMQ");
+                EmployeePublishedDto emp = _mapper.Map<EmployeePublishedDto>(epmloyeeDto);
+                _messageBusClient.PublishNewEmployee(emp);
+            }
+            catch(Exception ex)
+            {
+                Console.Write("Error in EmployeeService - HttpPost:" + ex.Message);
             }
             //For testing purpose
             if (employeeCreateDto.FirstName.Equals("John") && employeeCreateDto.FirstName.Equals("Doe"))

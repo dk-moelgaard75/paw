@@ -11,8 +11,10 @@ namespace TaskService.DTOs
         public string TaskName { get; set; }
         public string Description { get; set; }
         public DateTime StartDate { get; set; }
-        public int EstimatedDays { get; set; }
+        public int EstimatedHours { get; set; }
         public DateTime EndDate { get; set; }
+        
+        public Guid TaskGuid { get; set; }
         public Guid CustomerGuid { get; set; }
 
     }

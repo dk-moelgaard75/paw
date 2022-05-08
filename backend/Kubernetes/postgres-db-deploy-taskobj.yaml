@@ -26,11 +26,11 @@ spec:
               value: taskobj
           volumeMounts:
             - mountPath: /var/lib/postgresql/taskobj/data
-              name: postgres-pv-claim
+              name: postgres-taskobj-pv-claim
       volumes:
-      - name: postgres-pv-claim
+      - name: postgres-taskobj-pv-claim
         persistentVolumeClaim:
-          claimName: postgres-pv-claim
+          claimName: postgres-taskobj-pv-claim
 ---
 apiVersion: v1
 kind: Service

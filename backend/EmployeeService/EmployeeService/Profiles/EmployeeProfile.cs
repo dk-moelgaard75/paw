@@ -21,6 +21,9 @@ namespace EmployeeService.Profiles
             CreateMap<Employee, EmployeeGetDto>();
             
             CreateMap<EmployeeCreateDto, Employee>();
+            //CreateMap<EmployeeCreateDto, Employee>();
+
+            CreateMap<EmployeeGetDto, EmployeePublishedDto>();
         }   
     }
 }

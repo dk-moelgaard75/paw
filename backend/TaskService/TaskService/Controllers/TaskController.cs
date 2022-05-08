@@ -9,6 +9,8 @@ using TaskService.DTOs;
 using TaskService.Models;
 using TaskService.Data;
 using TaskService.Utils;
+using TaskService.AsyncDataServices;
+
 namespace TaskService.Controllers
 {
     [Route("api/[controller]")]
@@ -16,10 +18,15 @@ namespace TaskService.Controllers
     {
         private readonly ITaskObjRepository _taskObjRepository;
         private readonly IMapper _mapper;
-        public TaskController(ITaskObjRepository taskObjRepository, IMapper mapper)
+        private readonly IMessageBusClient _messageBusClient;
+
+        public TaskController(ITaskObjRepository taskObjRepository, 
+                                IMapper mapper,
+                                IMessageBusClient msgBusClient)
         {
             _taskObjRepository = taskObjRepository;
             _mapper = mapper;
+            _messageBusClient = msgBusClient;
         }
         [HttpGet(Name = "GetAll")]
         public ActionResult<IEnumerable<TaskObjGetDto>> GetAll()
@@ -78,12 +85,12 @@ namespace TaskService.Controllers
                 Console.WriteLine($"{taskModel.TaskName}");
                 Console.WriteLine($"{taskModel.Description}");
                 Console.WriteLine($"{taskModel.StartDate.ToLongDateString()}");
-                Console.WriteLine($"{taskModel.EstimatedDays}");
+                Console.WriteLine($"{taskModel.EstimatedHours}");
 
-                taskModel.EndDate = DateUtil.CalcEndDate(taskModel.StartDate, taskModel.EstimatedDays);
+                taskModel.EndDate = DateUtil.CalcEndDate(taskModel.StartDate, taskModel.EstimatedHours);
 
                 //setting UID
-                taskModel.UID = Guid.NewGuid();
+                taskModel.TaskGuid = Guid.NewGuid();
 
                 //Use the internal model object to create a DbContext object
                 int createdEmployeeId = _taskObjRepository.Create(taskModel);

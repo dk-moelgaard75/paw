@@ -1,6 +1,6 @@
 //Alternativ look at:_ https://www.linkedin.com/pulse/3-steps-make-your-reactive-form-typesafe-angular-aart-den-braber/
 import { IEmployee } from './../shared/IEmployee';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit,ChangeDetectorRef  } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import { FormControl } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -33,8 +33,9 @@ export class PawEmployeeComponent implements OnInit {
   private curEmployeeId : number = 0;
   private _inEditMode : boolean = false;
 
-  constructor(emplService: EmployeeService) { 
+  constructor(emplService: EmployeeService,private changeDetection: ChangeDetectorRef) { 
     console.log("Constructor")
+    
     
     this.employeeService = emplService;
 
@@ -43,7 +44,9 @@ export class PawEmployeeComponent implements OnInit {
   ngOnInit(): void {
     this.getEmployeesWithHeaders();
   }
-  
+  public trackItem (index: number, item: IEmployee) {
+    return item.id;
+  }
   //setting ! after .get('') disables the null check. It´s ok since there are validation on all fields
   get firstname() {
     return this.employeeForm.get('firstname')!;
@@ -90,6 +93,7 @@ export class PawEmployeeComponent implements OnInit {
 
   getEmployees() {
     this.employeeService.getEmployees().subscribe((data: IEmployee[]) => {
+      console.log("getEmployees")
       this.employees = data;
     });
   }
@@ -130,6 +134,7 @@ export class PawEmployeeComponent implements OnInit {
           this.serviceStatus = "Brugeren opdateret";
           this.employees = [];
           this.getEmployees();
+          this.changeDetection.detectChanges();
         }
         else {
           this.serviceStatus = "Fejl opstået:" + response.statusText;

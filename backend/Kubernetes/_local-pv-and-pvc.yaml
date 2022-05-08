@@ -1,0 +1,31 @@
+#https://medium.com/@xcoulon/storing-data-into-persistent-volumes-on-kubernetes-fb155da16666
+#Execute like:
+#kubectl apply -f local-pv-and-pvc.yaml
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: postgres-customer-pv
+  labels:
+    type: local
+spec:
+  storageClassName: postgres-customer-storage
+  capacity:
+    storage: 100M
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: "/mnt/data/customer"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    app: postgres-customer-pvc
+  name: postgres-customer-pv-claim
+spec:
+  storageClassName: postgres-customer-storage
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 100M

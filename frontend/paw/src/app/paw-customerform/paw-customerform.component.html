@@ -94,10 +94,10 @@
                 -->
                 <br>
                 <div *ngIf="!inEditMode">
-                    <button class="btn btn-primary btn-sm" type="submit">Opret medarbejder</button>
+                    <button class="btn btn-primary btn-sm" type="submit">Opret kunde</button>
                 </div>
                 <div *ngIf="inEditMode">
-                    <button class="btn btn-primary btn-sm" type="submit">Opdater medarbejder</button>
+                    <button class="btn btn-primary btn-sm" type="submit">Opdater kunde</button>
                     <button class="btn btn-primary btn-sm mx-2" type="button" (click)="setEditModeFalse()">Afbryd</button>
                 </div>
 
@@ -113,7 +113,8 @@
                 *ngFor="let cust of customers"
                 class="list-group-item">
                 <span>{{ cust.firstName }} {{ cust.lastName}} {{ cust.email}} {{ cust.phone}} </span>
-                <button class="btn btn-primary btn-sm mx-2 float-end" (click)="editCustomer(cust.id)">Opdater</button><button class="btn btn-primary btn-sm mx-2 float-end" (click)="deleteCustomer(cust.id)">Slet</button>
+                <button class="btn btn-primary btn-sm mx-2 float-end" (click)="deleteCustomer(cust.id)">Slet</button>
+                <button class="btn btn-primary btn-sm mx-2 float-end" (click)="editCustomer(cust.id)">Opdater</button>
                 </li>
             
             </ul>

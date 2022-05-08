@@ -20,12 +20,11 @@ namespace TaskService.Models
         [Required]
         public DateTime StartDate { get; set; }
         [Required]
-        public int EstimatedDays { get; set; }
-        
+        public int EstimatedHours { get; set; }
         public DateTime EndDate { get; set; }
         [Required]
         public Guid CustomerGuid { get; set; }
-        public Guid UID { get; set; }
+        public Guid TaskGuid { get; set; }
 
     }
 }

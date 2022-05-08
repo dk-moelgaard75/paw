@@ -1,47 +1,49 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: postgres-customer
+  name: postgres-employee
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: postgres-customer
+      app: postgres-employee
   template:
     metadata:
       labels:
-        app: postgres-customer
+        app: postgres-employee
     spec:
       containers:
-        - name: postgres-customer
+        - name: postgres-employee
           image: postgres:10.1
           ports:
             - containerPort: 5432
           env:
             - name: POSTGRES_DB
-              value: customer
+              value: employee
             - name: POSTGRES_USER
-              value: customer
+              value: employee
             - name: POSTGRES_PASSWORD
-              value: customer
+              value: employee
+            - name: PGDATA
+              value: /var/lib/postgresql/data/customer
           volumeMounts:
-            - mountPath: /var/lib/postgresql/customer/data
-              name: postgres-pv-claim
+            - mountPath: /var/lib/postgresql/data
+              name: postgres-employee-pv-claim
       volumes:
-      - name: postgres-pv-claim
+      - name: postgres-employee-pv-claim
         persistentVolumeClaim:
-          claimName: postgres-pv-claim
+          claimName: postgres-employee-pv-claim
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: postgres-customer-clusterip-srv
+  name: postgres-employee-clusterip-srv
 spec:
   type: ClusterIP
   selector:
-    app: postgres-customer
+    app: postgres-employee
   ports:
-  - name: postgres-customer
+  - name: postgres-employee
     protocol: TCP
     port: 5432
     targetPort: 5432 

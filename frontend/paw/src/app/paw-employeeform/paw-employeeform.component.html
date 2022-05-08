@@ -79,9 +79,12 @@
                 <br />
                 <ul class="list-group">
                     <li 
-                    *ngFor="let emp of employees"
+                    *ngFor="let emp of employees" 
                     class="list-group-item">
-                    {{ emp.firstName }} {{ emp.lastName}} {{ emp.email}} {{ emp.phone}} <button class="btn btn-primary btn-sm mx-2 float-end" (click)="editEmployee(emp.id)">Opdater</button><button class="btn btn-primary btn-sm mx-2 float-end" (click)="deleteEmployee(emp.id)">Slet</button>
+                    {{ emp.firstName }} {{ emp.lastName}} {{ emp.email}} {{ emp.phone}} 
+                    
+                    <button class="btn btn-primary btn-sm mx-2 float-end" (click)="deleteEmployee(emp.id)">Slet</button>
+                    <button class="btn btn-primary btn-sm mx-2 float-end" (click)="editEmployee(emp.id)">Opdater</button>
                     </li>
                 
                 </ul>

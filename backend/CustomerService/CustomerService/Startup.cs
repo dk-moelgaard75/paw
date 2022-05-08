@@ -34,7 +34,7 @@ namespace CustomerService
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "CustomerService", Version = "v1" });
             });
-            string con = Configuration["Data:CommandApiConnection:ConnectionString"];
+            string con = Configuration["Data:CommandApiConnectionPod:ConnectionString"];
             Console.WriteLine($"Customer service starting with connectionstring: {con}");
             if (con != null)
             {
