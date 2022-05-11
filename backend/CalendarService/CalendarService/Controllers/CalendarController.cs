@@ -11,6 +11,11 @@ namespace CalendarService.Controllers
     [ApiController]
     public class CalendarController : ControllerBase
     {
+        private readonly IMessageBusClient _messageBusClient;
+        public CalendarController(IMessageBusClient msgBusClient)
+        {
+
+        }
         [HttpGet]
         public string GetCalendar()
         {

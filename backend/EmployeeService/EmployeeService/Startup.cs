@@ -35,6 +35,7 @@ namespace EmployeeService
             services.AddSingleton<IMessageBusClient, MessageBusClient>();
 
             services.AddControllers();
+            services.AddHostedService<MessageBusSubscriber>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "EmployeeService", Version = "v1" });

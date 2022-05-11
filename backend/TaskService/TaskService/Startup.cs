@@ -30,7 +30,10 @@ namespace TaskService
         public void ConfigureServices(IServiceCollection services)
         {
             Console.WriteLine("Task service start:" + DateTime.Now);
+            
+            //RabbitMQ
             services.AddSingleton<IMessageBusClient, MessageBusClient>();
+            
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {

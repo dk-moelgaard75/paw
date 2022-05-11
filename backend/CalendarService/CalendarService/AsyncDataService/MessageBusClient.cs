@@ -1,14 +1,9 @@
-﻿using EmployeeService.DTOs;
-using Microsoft.Extensions.Configuration;
-using RabbitMQ.Client;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace EmployeeService.AsyncDataServices
+namespace CalendarService.AsyncDataService
 {
     public class MessageBusClient : IMessageBusClient
     {
@@ -16,10 +11,10 @@ namespace EmployeeService.AsyncDataServices
         private IConnection _connection;
         private IModel _channel;
         private string RabbitMQEchangeString = "trigger";
+
         public MessageBusClient(IConfiguration configuration)
         {
             _configuration = configuration;
-
             var factory = new ConnectionFactory()
             {
                 HostName = _configuration["RabbitMQHost"],
@@ -27,39 +22,39 @@ namespace EmployeeService.AsyncDataServices
             };
             try
             {
-                System.Diagnostics.Debug.Print("RabbitMQPort:" + _configuration["RabbitMQPort"]);
                 _connection = factory.CreateConnection();
                 _channel = _connection.CreateModel();
 
-                _channel.ExchangeDeclare(exchange: RabbitMQEchangeString, type: ExchangeType.Direct);
+                _channel.ExchangeDeclare(exchange: RabbitMQEchangeString, type: ExchangeType.Fanout);
                 _connection.ConnectionShutdown += RabbitMQ_ConnectionShutdown;
-                Console.WriteLine("EmployeeService - connected to RabbitMQ/MessageBus");
+
+                PawLogger.DoLog("CalenddarService - connected to RabbitMQ/MessageBus");
 
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"--> Could not connect to message bus: {ex.Message}");
+                PawLogger.DoLog(string.Format("Could not connect to message bus {0}", ex.Message));
             }
         }
+
         private void RabbitMQ_ConnectionShutdown(object sender, ShutdownEventArgs e)
         {
-            //
-            Console.WriteLine("EmployeeService - RabbitMQ shutdown");
+            PawLogger.DoLog("TaskService - RabbitMQ shutdown");
         }
-        public void PublishNewEmployee(EmployeePublishedDto employeePublishedDto)
+
+        public void PublishNewTask(TaskObjPublishedDto taskObjPublishedDto)
         {
-            var message = JsonSerializer.Serialize(employeePublishedDto);
+            var message = JsonSerializer.Serialize(taskObjPublishedDto);
             if (_connection.IsOpen)
             {
-                System.Diagnostics.Debug.Print("EmployeeService - RabbitMQ connection is open - sending message");
+                PawLogger.DoLog("CalenddarService - RabbitMQ connection is open - sending message");
                 //TODO - send message
                 SendMessage(message);
             }
             else
             {
-                System.Diagnostics.Debug.Print("EmployeeService - RabbitMQ connection is NOT open - NO message sent");
+                PawLogger.DoLog("TaskService - RabbitMQ connection is NOT open - NO message sent");
             }
-
         }
         private void SendMessage(string message)
         {
@@ -68,12 +63,11 @@ namespace EmployeeService.AsyncDataServices
                                     routingKey: "",
                                     basicProperties: null,
                                     body: messageBody);
-            System.Diagnostics.Debug.Print($"EmployeeService - message sent thru RabbitMQ");
-            
+            PawLogger.DoLog("Taskservice - message sent thru RabbitMQ");
         }
         public void Dispose()
         {
-            Console.WriteLine("EmployeeService - MessageBus dispose");
+            PawLogger.DoLog("TaskService - MessageBus dispose");
             if (_channel.IsOpen)
             {
                 _channel.Close();
@@ -81,4 +75,5 @@ namespace EmployeeService.AsyncDataServices
             }
         }
     }
+}
 }
