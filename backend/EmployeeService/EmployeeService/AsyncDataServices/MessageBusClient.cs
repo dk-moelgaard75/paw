@@ -1,4 +1,5 @@
 ﻿using EmployeeService.DTOs;
+using EmployeeService.Utils;
 using Microsoft.Extensions.Configuration;
 using RabbitMQ.Client;
 using System;
@@ -13,71 +14,71 @@ namespace EmployeeService.AsyncDataServices
     public class MessageBusClient : IMessageBusClient
     {
         private IConfiguration _configuration;
-        private IConnection _connection;
-        private IModel _channel;
-        private string RabbitMQEchangeString = "trigger";
+
         public MessageBusClient(IConfiguration configuration)
         {
             _configuration = configuration;
-
-            var factory = new ConnectionFactory()
-            {
-                HostName = _configuration["RabbitMQHost"],
-                Port = int.Parse(_configuration["RabbitMQPort"])
-            };
-            try
-            {
-                System.Diagnostics.Debug.Print("RabbitMQPort:" + _configuration["RabbitMQPort"]);
-                _connection = factory.CreateConnection();
-                _channel = _connection.CreateModel();
-
-                _channel.ExchangeDeclare(exchange: RabbitMQEchangeString, type: ExchangeType.Direct);
-                _connection.ConnectionShutdown += RabbitMQ_ConnectionShutdown;
-                Console.WriteLine("EmployeeService - connected to RabbitMQ/MessageBus");
-
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"--> Could not connect to message bus: {ex.Message}");
-            }
+            RabbitMqUtil.Initialize(_configuration);
         }
-        private void RabbitMQ_ConnectionShutdown(object sender, ShutdownEventArgs e)
-        {
-            //
-            Console.WriteLine("EmployeeService - RabbitMQ shutdown");
-        }
-        public void PublishNewEmployee(EmployeePublishedDto employeePublishedDto)
+        public void PublishEmployee(EmployeePublishedDto employeePublishedDto)
         {
             var message = JsonSerializer.Serialize(employeePublishedDto);
-            if (_connection.IsOpen)
+            if (RabbitMqUtil.CalenderChannelOutgoing.IsOpen)
             {
-                System.Diagnostics.Debug.Print("EmployeeService - RabbitMQ connection is open - sending message");
+                PawLogger.DoLog("EmployeeService - RabbitMQ connection is open - sending message");
                 //TODO - send message
                 SendMessage(message);
             }
             else
             {
-                System.Diagnostics.Debug.Print("EmployeeService - RabbitMQ connection is NOT open - NO message sent");
+                PawLogger.DoLog("EmployeeService - RabbitMQ connection is NOT open - NO message sent");
+            }
+
+        }
+        public void PublishEmployees(List<EmployeePublishedDto> employeePublishedDtos)
+        {
+            var message = JsonSerializer.Serialize(employeePublishedDtos);
+            if (RabbitMqUtil.CalenderChannelOutgoing.IsOpen)
+            {
+                PawLogger.DoLog("EmployeeService - RabbitMQ connection is open - sending message");
+                //TODO - send message
+                SendMessage(message);
+            }
+            else
+            {
+                PawLogger.DoLog("EmployeeService - RabbitMQ connection is NOT open - NO message sent");
             }
 
         }
         private void SendMessage(string message)
         {
             var messageBody = Encoding.UTF8.GetBytes(message);
-            _channel.BasicPublish(exchange: RabbitMQEchangeString,
-                                    routingKey: "",
-                                    basicProperties: null,
-                                    body: messageBody);
-            System.Diagnostics.Debug.Print($"EmployeeService - message sent thru RabbitMQ");
+            RabbitMqUtil.CalenderChannelOutgoing.BasicPublish(exchange: _configuration["RabbitMQExchange"],
+                                                        routingKey: _configuration["RabbitMQRoutingKeyCalendarOutgoing"],
+                                                        basicProperties: null,
+                                                        body: messageBody);
+
+
+            PawLogger.DoLog("EmployeeService - message sent thru RabbitMQ");
             
         }
         public void Dispose()
         {
-            Console.WriteLine("EmployeeService - MessageBus dispose");
-            if (_channel.IsOpen)
+            PawLogger.DoLog("EmployeeService - MessageBus dispose");
+            bool closeConnection = false;
+            if (RabbitMqUtil.CalenderChannelOutgoing.IsOpen)
             {
-                _channel.Close();
-                _connection.Close();
+                RabbitMqUtil.CalenderChannelOutgoing.Close();
+                closeConnection = true;
+            }
+            if (RabbitMqUtil.CalenderChannelIncomming.IsOpen)
+            {
+                RabbitMqUtil.CalenderChannelIncomming.Close();
+                closeConnection = true;
+            }
+            if (closeConnection)
+            {
+                RabbitMqUtil.RabbitMQConnection.Close();
             }
         }
     }

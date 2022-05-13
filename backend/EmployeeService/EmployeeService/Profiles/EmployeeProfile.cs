@@ -23,7 +23,7 @@ namespace EmployeeService.Profiles
             CreateMap<EmployeeCreateDto, Employee>();
             //CreateMap<EmployeeCreateDto, Employee>();
 
-            CreateMap<EmployeeGetDto, EmployeePublishedDto>();
+            CreateMap<Employee, EmployeePublishedDto>();
         }   
     }
 }

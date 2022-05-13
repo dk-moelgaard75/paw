@@ -8,6 +8,7 @@ namespace EmployeeService.AsyncDataServices
 {
     public interface IMessageBusClient
     {
-        void PublishNewEmployee(EmployeePublishedDto employeePublishedDto);
+        void PublishEmployee(EmployeePublishedDto employeePublishedDto);
+        void PublishEmployees(List<EmployeePublishedDto> employeePublishedDtos);
     }
 }

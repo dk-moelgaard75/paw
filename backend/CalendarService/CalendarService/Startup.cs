@@ -1,3 +1,4 @@
+using CalendarService.AsyncDataService;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -26,8 +27,12 @@ namespace CalendarService
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //RabbitMQ
+            services.AddSingleton<IMessageBusClient, MessageBusClient>();
 
             services.AddControllers();
+
+            services.AddHostedService<MessageBusSubscriber>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "CalendarService", Version = "v1" });

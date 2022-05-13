@@ -1,5 +1,6 @@
 using EmployeeService.AsyncDataServices;
 using EmployeeService.Data;
+using EmployeeService.EventProcessing;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -31,8 +32,10 @@ namespace EmployeeService
         {
             Console.WriteLine("Employee service start:" + DateTime.Now);
 
-            //RabbitMQ
+            //RabbitMQ messagebus
             services.AddSingleton<IMessageBusClient, MessageBusClient>();
+            //EventProcessor - handles DB repository access for MessageBusSubscriber
+            services.AddSingleton<IEventProcessor, EventProcessor>();
 
             services.AddControllers();
             services.AddHostedService<MessageBusSubscriber>();
@@ -53,19 +56,6 @@ namespace EmployeeService
             }
             services.AddScoped<IEmployeeRepository, EmployeeRepository>();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-            /*
-            services.AddCors(options =>
-            {
-                options.AddDefaultPolicy(
-                    builder =>
-                    {
-                        builder.WithOrigins("http://localhost:4200")
-                                            .AllowAnyHeader()
-                                            .AllowAnyMethod()
-                                            .AllowCredentials();
-                    });
-            });
-            */
             services.AddCors(options =>
             {
                 options.AddDefaultPolicy(

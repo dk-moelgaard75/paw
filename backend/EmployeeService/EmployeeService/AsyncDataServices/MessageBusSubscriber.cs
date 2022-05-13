@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using EmployeeService.Utils;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -8,38 +9,58 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Text.Json;
+using EmployeeService.DTOs;
+using EmployeeService.EventProcessing;
 
 namespace EmployeeService.AsyncDataServices
 {
     public class MessageBusSubscriber : BackgroundService
     {
         private IConfiguration _configuration;
-        private IConnection _connection;
-        private IModel _channel;
-        private string _queueName;
+        private IMessageBusClient _messageBusClient;
+        private IEventProcessor _eventProcessor;
 
-        public MessageBusSubscriber(IConfiguration configuration)
+        /*
+private IConnection _connection;
+private IModel _channel;
+private string _queueName;
+*/
+
+        public MessageBusSubscriber(IConfiguration configuration, 
+                                    IMessageBusClient msgBusClient,
+                                    IEventProcessor eventProcessor)
         {
             _configuration = configuration;
-            InitializeRabbitMQ();
+            _messageBusClient = msgBusClient;
+            _eventProcessor = eventProcessor;
+            RabbitMqUtil.Initialize(_configuration);
         }
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
             stoppingToken.ThrowIfCancellationRequested();
-            var consumer = new EventingBasicConsumer(_channel);
-            consumer.Received += (ModuleHandle, ea) =>
+            if (RabbitMqUtil.IsInitialized)
             {
-                Console.WriteLine("EmployeeService - MessageBusSubscribe - event received");
-                var body = ea.Body;
-                var data = Encoding.UTF8.GetString(body.ToArray());
-                //handle - thru eventpro
-            };
-            _channel.BasicConsume(queue: _queueName, autoAck: true, consumer: consumer);
+                var consumer = new EventingBasicConsumer(RabbitMqUtil.CalenderChannelIncomming);
+                consumer.Received += (ModuleHandle, ea) =>
+                {
+                    PawLogger.DoLog("EmployeeService - MessageBusSubscribe - event received:");
+                    var body = ea.Body;
+                    var data = Encoding.UTF8.GetString(body.ToArray());
+                    PawLogger.DoLog("Data: " + data);
+                    CalenderRequestDto message = JsonSerializer.Deserialize<CalenderRequestDto>(data);
+                    PawLogger.DoLog("Message - searchField: " + message.SearchField);
+                    PawLogger.DoLog("Message - searchValue: " + message.SearchValue);
+                    _messageBusClient.PublishEmployees(_eventProcessor.GetEmployees(message));
+                };
+                RabbitMqUtil.CalenderChannelIncomming.BasicConsume(queue: RabbitMqUtil.CalenderQueueNameIncomming, autoAck: true, consumer: consumer);
+            }
+
             return Task.CompletedTask;
         }
 
         
-
+        /*
         private void InitializeRabbitMQ()
         {
             var factory = new ConnectionFactory() { 
@@ -48,25 +69,35 @@ namespace EmployeeService.AsyncDataServices
             };
             _connection = factory.CreateConnection();
             _channel = _connection.CreateModel();
+            
             _channel.ExchangeDeclare(exchange: _configuration["RabbitMQExchange"], type: ExchangeType.Fanout);
+            
             _queueName = _channel.QueueDeclare().QueueName;
+            
             _channel.QueueBind(queue: _queueName, exchange : _configuration["RabbitMQExchange"], routingKey: "");
-            Console.WriteLine("EmployeeService - listning on the MessageBus");
+            
+            PawLogger.DoLog("EmployeeService - listning on the MessageBus");
             _connection.ConnectionShutdown += _connection_ConnectionShutdown;
 
 
         }
-
-        private void _connection_ConnectionShutdown(object sender, ShutdownEventArgs e)
-        {
-            Console.WriteLine("EmployeeService - RabbitMQ connection shutdown");
-        }
+        */
         public override void Dispose()
         {
-            if (_channel.IsOpen)
+            bool closeConnection = false;
+            if (RabbitMqUtil.CalenderChannelIncomming.IsOpen)
             {
-                _channel.Close();
-                _connection.Close();
+                RabbitMqUtil.CalenderChannelIncomming.Close();
+                closeConnection = true;
+            }
+            if (RabbitMqUtil.CalenderChannelOutgoing.IsOpen)
+            {
+                RabbitMqUtil.CalenderChannelOutgoing.Close();
+                closeConnection = true;
+            }
+            if (closeConnection)
+            {
+                RabbitMqUtil.RabbitMQConnection.Close();
             }
             base.Dispose();
         }

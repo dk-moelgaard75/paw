@@ -1,79 +1,120 @@
-﻿using System;
+﻿using CalendarService.DTOs;
+using CalendarService.Utils;
+using Microsoft.Extensions.Configuration;
+using RabbitMQ.Client;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace CalendarService.AsyncDataService
 {
     public class MessageBusClient : IMessageBusClient
     {
+        
         private IConfiguration _configuration;
+        /*
         private IConnection _connection;
-        private IModel _channel;
-        private string RabbitMQEchangeString = "trigger";
-
+        private IModel _channelEmployee;
+        private IModel _channelTask;
+        */
         public MessageBusClient(IConfiguration configuration)
         {
             _configuration = configuration;
-            var factory = new ConnectionFactory()
+            RabbitMqUtil.Initialize(configuration);
+        }
+
+        public void RequestEmployee(string searchField, string searchValue)
+        {
+            if (RabbitMqUtil.IsInitialized)
             {
-                HostName = _configuration["RabbitMQHost"],
-                Port = int.Parse(_configuration["RabbitMQPort"])
-            };
-            try
-            {
-                _connection = factory.CreateConnection();
-                _channel = _connection.CreateModel();
-
-                _channel.ExchangeDeclare(exchange: RabbitMQEchangeString, type: ExchangeType.Fanout);
-                _connection.ConnectionShutdown += RabbitMQ_ConnectionShutdown;
-
-                PawLogger.DoLog("CalenddarService - connected to RabbitMQ/MessageBus");
-
+                EmployeeGetDto empGetDto = new EmployeeGetDto() { SearchField = searchField, SearchValue = searchValue };
+                var message = JsonSerializer.Serialize(empGetDto);
+                //if (_connection.IsOpen)
+                if (RabbitMqUtil.RabbitMQConnection.IsOpen)
+                {
+                    PawLogger.DoLog(String.Format("CalenddarService - RabbitMQ connection is open - requesting empoyee ({0}/{1}", searchField, searchValue));
+                    //TODO - send message
+                    SendEmployeeMessage(message);
+                }
+                else
+                {
+                    PawLogger.DoLog("TaskService - RabbitMQ connection is NOT open - NO message sent");
+                }
             }
-            catch (Exception ex)
+            else
             {
-                PawLogger.DoLog(string.Format("Could not connect to message bus {0}", ex.Message));
+                PawLogger.DoLog("TaskService - RabbitMQUtil not initialized");
             }
         }
 
-        private void RabbitMQ_ConnectionShutdown(object sender, ShutdownEventArgs e)
+        public void RequestEmployees()
         {
-            PawLogger.DoLog("TaskService - RabbitMQ shutdown");
-        }
-
-        public void PublishNewTask(TaskObjPublishedDto taskObjPublishedDto)
-        {
-            var message = JsonSerializer.Serialize(taskObjPublishedDto);
-            if (_connection.IsOpen)
+            EmployeeGetDto empGetDto = new EmployeeGetDto() { SearchField = "ALL", SearchValue = "ALL" };
+            var message = JsonSerializer.Serialize(empGetDto);
+            if (RabbitMqUtil.RabbitMQConnection.IsOpen)
             {
-                PawLogger.DoLog("CalenddarService - RabbitMQ connection is open - sending message");
-                //TODO - send message
-                SendMessage(message);
+                PawLogger.DoLog("CalenddarService - RabbitMQ connection is open - requesting all empoyees");
+                SendEmployeeMessage(message);
             }
             else
             {
                 PawLogger.DoLog("TaskService - RabbitMQ connection is NOT open - NO message sent");
             }
+
         }
-        private void SendMessage(string message)
+        private void SendEmployeeMessage(string message)
         {
             var messageBody = Encoding.UTF8.GetBytes(message);
-            _channel.BasicPublish(exchange: RabbitMQEchangeString,
-                                    routingKey: "",
-                                    basicProperties: null,
-                                    body: messageBody);
+            RabbitMqUtil.EmployeeChannelOutgoing.BasicPublish(exchange: _configuration["RabbitMQExchange"],
+                                                      routingKey: _configuration["RabbitMQRoutingKeyEmployeeOutgoing"],
+                                                        basicProperties:  null,
+                                                        body: messageBody);
             PawLogger.DoLog("Taskservice - message sent thru RabbitMQ");
+        }
+
+        public void RequestTasks()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RequestTask(DateTime startDate)
+        {
+            throw new NotImplementedException();
         }
         public void Dispose()
         {
             PawLogger.DoLog("TaskService - MessageBus dispose");
-            if (_channel.IsOpen)
+            bool closeConnection = false;
+            if (RabbitMqUtil.EmployeeChannelIncomming.IsOpen)
             {
-                _channel.Close();
-                _connection.Close();
+                RabbitMqUtil.EmployeeChannelIncomming.Close();
+                closeConnection = true;
             }
+            if (RabbitMqUtil.EmployeeChannelOutgoing.IsOpen)
+            {
+                RabbitMqUtil.EmployeeChannelOutgoing.Close();
+                closeConnection = true;
+            }
+            if (RabbitMqUtil.TaskChannelIncomming.IsOpen)
+            {
+                RabbitMqUtil.EmployeeChannelIncomming.Close();
+                closeConnection = true;
+            }
+            if (RabbitMqUtil.TaskChannelOutgoing.IsOpen)
+            {
+                RabbitMqUtil.EmployeeChannelIncomming.Close();
+                closeConnection = true;
+            }
+
+            if (closeConnection)
+            {
+                RabbitMqUtil.RabbitMQConnection.Close();
+            }
+               
         }
+
     }
-}
 }

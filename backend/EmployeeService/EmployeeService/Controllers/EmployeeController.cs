@@ -92,7 +92,7 @@ namespace EmployeeService.Controllers
             {
                 System.Diagnostics.Debug.Print("RabbitMQ");
                 EmployeePublishedDto emp = _mapper.Map<EmployeePublishedDto>(epmloyeeDto);
-                _messageBusClient.PublishNewEmployee(emp);
+                _messageBusClient.PublishEmployee(emp);
             }
             catch(Exception ex)
             {
