@@ -22,10 +22,12 @@ export class PawEmployeeComponent implements OnInit {
     lastname: new FormControl('', Validators.required),
     email: new FormControl('', Validators.required),
     phone: new FormControl('', Validators.required),
-    password: new FormControl('', Validators.required)
+    password: new FormControl('', Validators.required),
+    employeetype: new FormControl('',Validators.required)
   });
 
   public employees: IEmployee[] = [];
+  public employeeTypeValue = [{id:'employee', name:'Medarbejder'}, {id:'admin', name:'Administrator'}]; 
   private employeeService: EmployeeService;
   private serviceStatus: string = "N/A";
   private httpHeaders: HttpHeaders = new HttpHeaders;
@@ -43,9 +45,6 @@ export class PawEmployeeComponent implements OnInit {
 
   ngOnInit(): void {
     this.getEmployeesWithHeaders();
-  }
-  public trackItem (index: number, item: IEmployee) {
-    return item.id;
   }
   //setting ! after .get('') disables the null check. It´s ok since there are validation on all fields
   get firstname() {
@@ -83,6 +82,13 @@ export class PawEmployeeComponent implements OnInit {
     return this.employeeForm.get('password')!.value;
   }
 
+  get employeetype() {
+    return this.employeeForm.get('employeetype')!;
+  }
+  currentEmployeeType() {
+    return this.employeeForm.get('employeetype')!.value;
+  }
+
   getStatusLabel() {
     return this.serviceStatus;
 
@@ -112,7 +118,8 @@ export class PawEmployeeComponent implements OnInit {
                 'lastName': this.currentLastName(), 
                 'email': this.currentEmail(), 
                 'phone': this.currentPhone(),
-                'password': this.currentPassword()} as IEmployee
+                'password': this.currentPassword(),
+                'employeeType': this.currentEmployeeType()} as IEmployee
     if (!this._inEditMode) {
       this.employeeService.createEmployeeWithHeaders(post).subscribe((response: HttpResponse<IEmployee>)=> {
         if (response != null && response.ok)

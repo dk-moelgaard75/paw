@@ -11,8 +11,9 @@ import { Icu } from '@angular/compiler/src/i18n/i18n_ast';
   providedIn: 'root'
 })
 export class CustomerService {
-  apiURL = 'http://acme.com/api';
-  //apiURL = 'https://localhost:44316/api';
+  //apiURL = 'http://acme.com/api';
+  apiURL = 'http://paw.dk/api';
+  //apiURL = 'https://localhost:44316/api'; 
   constructor(private http: HttpClient) { }
 
   httpOptions = {

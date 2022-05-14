@@ -20,6 +20,7 @@ namespace EmployeeService.Models
         
         public string Phone { get; set; }
         public string Password { get; set; }
+        public string EmployeeType { get; set; }
 
         public Guid UID { get; set; }
     }

@@ -13,7 +13,8 @@ import { retry, catchError,map, pluck } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class EmployeeService {
-  apiURL = 'http://acme.com/api';
+  //apiURL = 'http://acme.com/api';
+  apiURL = 'http://paw.dk/api';
   
   constructor(private http: HttpClient) {}
   /*========================================

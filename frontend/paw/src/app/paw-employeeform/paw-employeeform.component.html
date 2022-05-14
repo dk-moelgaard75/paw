@@ -60,6 +60,19 @@
                                 <div *ngIf="password?.errors?.['required']" >Kodeordet skal angives</div>
                             </div>
                     </div>
+                    <div class="form-group">
+                        <label for="employeeType">Type </label> <br/>
+                        <select 
+                            formControlName="employeetype"
+                            id="employeetype"
+                            class="form-control">
+                            <option disabled>Vælg medarbejdertype</option>
+                            <option *ngFor="let empType of employeeTypeValue" [ngValue]="empType.id">{{empType.name}}</option>
+                        </select>  
+                        <div *ngIf="!inEditMode && employeetype?.touched && employeetype?.invalid" class="alert alert-danger">
+                        <div *ngIf="employeetype?.errors?.['required']" >Type skal angives - klik for at vælge</div>
+                    </div>                      
+                    </div>
                     <br />
                     <div *ngIf="!inEditMode">
                         <button class="btn btn-primary btn-sm" type="submit">Opret medarbejder</button>

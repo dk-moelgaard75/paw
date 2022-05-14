@@ -5,9 +5,9 @@ metadata:
 spec:
   type: NodePort
   selector:
-    app: postgres-employee
+    app: postgres-db-employee
   ports:
-    - name: postgres-employee
+    - name: postgres-db-employee
       protocol: TCP
       port: 5432
       targetPort: 5432

@@ -18,6 +18,8 @@ namespace EmployeeService.DTOs
         [Required]
         public string Phone { get; set; }
         [Required]
+
+        public string EmployeeType { get; set; }
         public string Password { get; set; }
 
     }

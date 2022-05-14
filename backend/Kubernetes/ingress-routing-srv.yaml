@@ -5,7 +5,7 @@ metadata:
 spec:
   ingressClassName: nginx   
   rules:
-    - host: acme.com
+    - host: paw.dk
       http:
         paths:
           - path: /api/employee

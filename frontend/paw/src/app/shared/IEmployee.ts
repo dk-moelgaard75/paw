@@ -5,4 +5,5 @@ export interface IEmployee {
     email: string;
     phone: string;
     password: string
+    employeeType: string
 }
