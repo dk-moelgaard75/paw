@@ -8,9 +8,11 @@ using System.Threading.Tasks;
 using AutoMapper;
 using CustomerService.DTOs;
 using CustomerService.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CustomerService.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     public class CustomerController : ControllerBase
     {

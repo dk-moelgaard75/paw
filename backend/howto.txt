@@ -38,5 +38,14 @@ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/cont
 
 
 
+//LINKS
+https://jasonwatmore.com/post/2019/06/22/angular-8-jwt-authentication-example-tutorial
+https://www.udemy.com/course/the-complete-angular-master-class/
+https://www.youtube.com/watch?v=DgVjEo3OGBI
+https://www.freakyjolly.com/angular-json-web-token-authentication-tutorial-using-angular2-jwt/ 
+https://www.thecodehubs.com/decode-jwt-token-in-angular/
+https://codepedia.info/jwt-authentication-in-aspnet-core-web-api-token
+https://www.youtube.com/watch?v=cuRDyrcWddg
+
  
  

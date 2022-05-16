@@ -34,10 +34,17 @@ export class PawEmployeeComponent implements OnInit {
   private httpKeys: string[] = [];
   private curEmployeeId : number = 0;
   private _inEditMode : boolean = false;
+  private apiToken: string | null;
+  private _userValidated: boolean = false;
 
   constructor(emplService: EmployeeService,private changeDetection: ChangeDetectorRef) { 
     console.log("Constructor")
-    
+    this.apiToken = localStorage.getItem('token');
+    if (this.apiToken != null)
+    {
+      this._userValidated = true;
+    }
+
     
     this.employeeService = emplService;
 
@@ -94,13 +101,17 @@ export class PawEmployeeComponent implements OnInit {
 
   }
   get inEditMode() {
-    return this._inEditMode;
+    return this._inEditMode; 
+  }
+
+  get userIsValid() {
+    return this._userValidated;
   }
 
   getEmployees() {
-    this.employeeService.getEmployees().subscribe((data: IEmployee[]) => {
+    this.employeeService.getEmployees().subscribe((response: HttpResponse<IEmployee[]>) => {
       console.log("getEmployees")
-      this.employees = data;
+      this.employees = response.body as IEmployee[];
     });
   }
   getEmployeesWithHeaders() {

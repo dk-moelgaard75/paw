@@ -11,38 +11,40 @@
                             <i class="fs-4 bi-house"></i> <span class="ms-1 d-none d-sm-inline">Hjem</span>
                         </a>
                     </li>
-                    <li class="nav-item">
+                    
+                    <li *ngIf="isAdmin()" class="nav-item">
                         <a [routerLink]="['/employee']" class="nav-link align-middle px-0">
                             <i class="fs-4 bi-person-workspace"></i> <span class="ms-1 d-none d-sm-inline">Medarbejder</span> </a>
                     </li>
-                    <li>
+                    <li *ngIf="isAdmin()" class="nav-item">
                         <a [routerLink]="['/customer']" class="nav-link px-0 align-middle">
                             <i class="fs-4 bi-people"></i> <span class="ms-1 d-none d-sm-inline">Kunder</span> </a>
                     </li>
 
-                    <li>
-                        <a [routerLink]="['/customer']" class="nav-link px-0 align-middle">
+                    <li *ngIf="isAdmin()" class="nav-item">
+                        <a [routerLink]="['/task']" class="nav-link px-0 align-middle">
                             <i class="fs-4 bi-table"></i> <span class="ms-1 d-none d-sm-inline">Opgaver</span></a>
                     </li>
-                    <li class="nav-item">
-                        <a [routerLink]="['/employee']" class="nav-link align-middle px-0">
-                            <i class="fs-4 bi-speedometer2"></i> <span class="ms-1 d-none d-sm-inline">VENTER</span> </a>
+
+                    
+                    <li *ngIf="isEmployee()" class="nav-item">
+                        <a [routerLink]="['/tasklist']" class="nav-link align-middle px-0">
+                            <i class="fs-4 bi-table"></i> <span class="ms-1 d-none d-sm-inline">Opgaver</span> </a>
                     </li>
 
                     <li>
-                        <a href="#submenu2" data-bs-toggle="collapse" class="nav-link px-0 align-middle ">
-                            <i class="fs-4 bi-bootstrap"></i> <span class="ms-1 d-none d-sm-inline">Bootstrap</span></a>
+                        <div class="nav-link px-0 align-middle">
+                            <span class="ms-1 d-none d-sm-inline">Aktuelle bruger:{{userName}}</span> 
+                            </div>
                     </li>
                     <li>
-                        <a href="#submenu3" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
-                            <i class="fs-4 bi-grid"></i> <span class="ms-1 d-none d-sm-inline">Products</span> </a>
+                        <button button class="btn btn-primary btn-sm mx-2" type="button" (click)="logOut()">Logud</button>
                     </li>
-                    <li>
-                        <a href="#" class="nav-link px-0 align-middle">
-                            <i class="fs-4 bi-people"></i> <span class="ms-1 d-none d-sm-inline">Customers</span> </a>
-                    </li>
+
                 </ul>
-                <hr>
+                
+                
+
                 <!--
                 <div class="dropdown pb-4">
                     <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">

@@ -74,7 +74,7 @@
                     </div>                      
                     </div>
                     <br />
-                    <div *ngIf="!inEditMode">
+                    <div *ngIf="!inEditMode && userIsValid">
                         <button class="btn btn-primary btn-sm" type="submit">Opret medarbejder</button>
                     </div>
                     <div *ngIf="inEditMode">

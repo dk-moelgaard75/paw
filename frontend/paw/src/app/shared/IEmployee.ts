@@ -6,4 +6,5 @@ export interface IEmployee {
     phone: string;
     password: string
     employeeType: string
+    token?: string
 }

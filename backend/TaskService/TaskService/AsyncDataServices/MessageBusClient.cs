@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using EmployeeService.Utils;
+using Microsoft.Extensions.Configuration;
 using RabbitMQ.Client;
 using System;
 using System.Collections.Generic;
@@ -32,19 +33,19 @@ namespace TaskService.AsyncDataServices
 
                 _channel.ExchangeDeclare(exchange: RabbitMQEchangeString, type: ExchangeType.Fanout);
                 _connection.ConnectionShutdown += RabbitMQ_ConnectionShutdown;
-                Console.WriteLine("TaskService - connected to RabbitMQ/MessageBus");
+                PawLogger.DoLog("TaskService - connected to RabbitMQ/MessageBus");
 
             }
             catch(Exception ex)
             {
-                Console.WriteLine($"--> Could not connect to message bus: {ex.Message}");
+                PawLogger.DoLog($"--> Could not connect to message bus: {ex.Message}");
             }
         }
 
         private void RabbitMQ_ConnectionShutdown(object sender, ShutdownEventArgs e)
         {
             //
-            Console.WriteLine("TaskService - RabbitMQ shutdown");
+            PawLogger.DoLog("TaskService - RabbitMQ shutdown");
         }
 
         public void PublishNewTask(TaskObjPublishedDto taskObjPublishedDto)
@@ -52,13 +53,13 @@ namespace TaskService.AsyncDataServices
             var message = JsonSerializer.Serialize(taskObjPublishedDto);
             if (_connection.IsOpen)
             {
-                Console.WriteLine("TaskService - RabbitMQ connection is open - sending message");
+                PawLogger.DoLog("TaskService - RabbitMQ connection is open - sending message");
                 //TODO - send message
                 SendMessage(message);
             }
             else
             {
-                Console.WriteLine("TaskService - RabbitMQ connection is NOT open - NO message sent");
+                PawLogger.DoLog("TaskService - RabbitMQ connection is NOT open - NO message sent");
             }
         }
         private void SendMessage(string message)
@@ -68,11 +69,11 @@ namespace TaskService.AsyncDataServices
                                     routingKey: "",
                                     basicProperties: null,
                                     body: messageBody);
-            Console.WriteLine($"Taskservice - message sent thru RabbitMQ");
+            PawLogger.DoLog($"Taskservice - message sent thru RabbitMQ");
         }
         public void Dispose()
         {
-            Console.WriteLine("TaskService - MessageBus dispose");
+            PawLogger.DoLog("TaskService - MessageBus dispose");
             if (_channel.IsOpen)
             {
                 _channel.Close();

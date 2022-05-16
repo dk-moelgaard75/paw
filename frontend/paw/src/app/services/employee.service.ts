@@ -13,10 +13,15 @@ import { retry, catchError,map, pluck } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class EmployeeService {
-  //apiURL = 'http://acme.com/api';
-  apiURL = 'http://paw.dk/api';
   
-  constructor(private http: HttpClient) {}
+  apiURL = 'http://paw.dk/api'; 
+  //apiURL = 'https://localhost:44383/api'
+  private apiToken: string | null;
+  
+  
+  constructor(private http: HttpClient) {
+    this.apiToken = localStorage.getItem('token');
+  }
   /*========================================
     CRUD Methods for consuming RESTful API
   =========================================*/
@@ -31,22 +36,28 @@ export class EmployeeService {
 
 
   // HttpClient API get() method => Fetch employeeslist
-  getEmployees(): Observable<IEmployee[]> {
+  //Authorization", "Bearer " + this.apiToken
+  getEmployees(): Observable<HttpResponse<IEmployee[]>> {
     return this.http
-      .get<IEmployee[]>(this.apiURL + '/employee')
+      .get<IEmployee[]>(
+        this.apiURL + '/employee',
+        {headers: new HttpHeaders({'Content-Type':  'application/json', 'Authorization' : 'Bearer ' + this.apiToken}),observe: 'response'}
+        
+        )
       .pipe(retry(1), catchError(this.handleError)); 
   }
   getEmployeesWithHeader() : Observable<HttpResponse<IEmployee[]>>{
     return this.http.get<IEmployee[]>(
       this.apiURL +'/employee/',
-      {observe: 'response'}).
+      {headers: new HttpHeaders({'Content-Type':  'application/json', 'Authorization' : 'Bearer ' + this.apiToken}),observe: 'response'}).
       pipe(retry(1),catchError(this.handleError));
   }
 
   // HttpClient API get() method => Fetch employee
   getEmployee(id: any): Observable<IEmployee> {
     return this.http
-      .get<IEmployee>(this.apiURL + '/employee/' + id)
+      .get<IEmployee>(this.apiURL + '/employee/' + id,
+      {headers: new HttpHeaders({'Content-Type':  'application/json', 'Authorization' : 'Bearer ' + this.apiToken})})
       .pipe(retry(1), catchError(this.handleError));
   }
 
@@ -56,7 +67,7 @@ export class EmployeeService {
       .post<IEmployee>(
         this.apiURL + '/employee',
         JSON.stringify(employee),
-        this.httpOptions
+        {headers: new HttpHeaders({'Content-Type':  'application/json', 'Authorization' : 'Bearer ' + this.apiToken})}
       )
       .pipe(retry(1), catchError(this.handleError));
   }
@@ -66,7 +77,7 @@ export class EmployeeService {
       .post<IEmployee>(
         this.apiURL + '/employee',
         JSON.stringify(employee),
-        {headers: new HttpHeaders({'Content-Type':  'application/json'}),observe: 'response'}
+        {headers: new HttpHeaders({'Content-Type':  'application/json', 'Authorization' : 'Bearer ' + this.apiToken}),observe: 'response'}
       ).pipe(catchError(this.handleError));
   }
   
@@ -76,7 +87,7 @@ export class EmployeeService {
       .put<IEmployee>(
         this.apiURL + '/employee/' + id,
         JSON.stringify(employee),
-        this.httpOptions
+        {headers: new HttpHeaders({'Content-Type':  'application/json', 'Authorization' : 'Bearer ' + this.apiToken})}
       )
       .pipe(retry(1), catchError(this.handleError));
   }
@@ -85,7 +96,7 @@ export class EmployeeService {
       .put<IEmployee>(
         this.apiURL + '/employee/',
         JSON.stringify(employee),
-        {headers: new HttpHeaders({'Content-Type':  'application/json'}),observe: 'response'}
+        {headers: new HttpHeaders({'Content-Type':  'application/json', 'Authorization' : 'Bearer ' + this.apiToken}),observe: 'response'}
       )
       .pipe(retry(1), catchError(this.handleError));
   }
@@ -93,7 +104,8 @@ export class EmployeeService {
   // HttpClient API delete() method => Delete employee
   deleteEmployee(id: any) {
     return this.http
-      .delete(this.apiURL + '/employee/' + id, {observe: 'response'})
+      .delete(this.apiURL + '/employee/' + id, 
+      {headers: new HttpHeaders({'Content-Type':  'application/json', 'Authorization' : 'Bearer ' + this.apiToken}),observe: 'response'})
       .pipe(retry(1), catchError(this.handleError));
   }
   // Error handling

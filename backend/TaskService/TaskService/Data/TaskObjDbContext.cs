@@ -14,5 +14,6 @@ namespace TaskService.Data
             Database.Migrate();
         }
         public DbSet<TaskObject> TaskObjs { get; set; }
+        public DbSet<TaskXEmployee> TaskXEmployee { get; set; }
     }
 }

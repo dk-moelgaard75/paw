@@ -11,6 +11,7 @@ namespace TaskService.DTOs
         public string TaskName { get; set; }
         public string Description { get; set; }
         public DateTime StartDate { get; set; }
+        public int StartHour { get; set; }
         public int EstimatedHours { get; set; }
         public DateTime EndDate { get; set; }
         

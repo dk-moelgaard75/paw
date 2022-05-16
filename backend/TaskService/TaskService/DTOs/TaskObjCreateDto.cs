@@ -16,11 +16,15 @@ namespace TaskService.DTOs
         
         [Required]
         public DateTime StartDate { get; set; }
-        
         [Required]
-        public int EstimatedDays { get; set; }
+        public int StartHour { get; set; }
+
+        [Required]
+        public int EstimatedHours { get; set; }
                 
         [Required]
         public Guid CustomerGuid { get; set; }
+
+        public List<TaskXEmployeeDto> Employees { get; set; }
     }
 }

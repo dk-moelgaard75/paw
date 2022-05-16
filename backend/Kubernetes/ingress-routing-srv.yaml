@@ -15,6 +15,13 @@ spec:
                 name: employee-clusterip-srv
                 port:
                   number: 80
+          - path: /api/authentication
+            pathType: Prefix
+            backend:
+              service:
+                name: employee-clusterip-srv
+                port:
+                  number: 80
           - path: /api/customer
             pathType: Prefix
             backend:

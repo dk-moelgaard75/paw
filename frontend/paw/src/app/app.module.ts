@@ -9,10 +9,11 @@ import { PawCustomerformComponent } from './paw-customerform/paw-customerform.co
 import { PawEmployeeComponent } from './paw-employeeform/paw-employeeform.component';
 import { PawLogonComponent } from './paw-logon/paw-logon.component';
 import { PawHomeComponent } from './paw-home/paw-home.component';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClient, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { PawTaskformComponent } from './paw-taskform/paw-taskform.component';
-import { PawLoginComponent } from './paw-login/paw-login.component';
 import { PawNoAccessComponent } from './paw-no-access/paw-no-access.component';
+import { JwtHelperService, JWT_OPTIONS } from '@auth0/angular-jwt';
+import { PawTasklistComponent } from './paw-tasklist/paw-tasklist.component';
 
 @NgModule({
   declarations: [
@@ -23,8 +24,8 @@ import { PawNoAccessComponent } from './paw-no-access/paw-no-access.component';
     PawLogonComponent,
     PawHomeComponent,
     PawTaskformComponent,
-    PawLoginComponent,
-    PawNoAccessComponent
+    PawNoAccessComponent,
+    PawTasklistComponent
   ],
   imports: [
     BrowserModule,
@@ -32,7 +33,10 @@ import { PawNoAccessComponent } from './paw-no-access/paw-no-access.component';
     ReactiveFormsModule,
     HttpClientModule
   ],
-  providers: [],
+  providers: [
+    { provide: JWT_OPTIONS, useValue: JWT_OPTIONS },
+     JwtHelperService
+    ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

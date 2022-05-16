@@ -10,6 +10,7 @@ using TaskService.Models;
 using TaskService.Data;
 using TaskService.Utils;
 using TaskService.AsyncDataServices;
+using EmployeeService.Utils;
 
 namespace TaskService.Controllers
 {
@@ -28,23 +29,16 @@ namespace TaskService.Controllers
             _mapper = mapper;
             _messageBusClient = msgBusClient;
         }
-        [HttpGet(Name = "GetAll")]
-        public ActionResult<IEnumerable<TaskObjGetDto>> GetAll()
+        [HttpGet(Name = "Get")]
+        public ActionResult Get()
         {
-            Console.WriteLine("TaskService - Http GET recieved");
-            IEnumerable<TaskObject> tasks = _taskObjRepository.GetAll();
-            //return JsonSerializer.Serialize(emps);
-            return Ok(_mapper.Map<IEnumerable<TaskObjGetDto>>(tasks));
+
+            return Ok();
         }
         [HttpGet("{id}", Name = "GetById")]
-        public ActionResult<TaskObjGetDto> GetById(int id)
+        public ActionResult<TaskObjGetDto> GetById(Guid id)
         {
             Console.WriteLine($"TaskService - Http GET recieved with ID: {id}");
-            TaskObject task = _taskObjRepository.GetById(id);
-            if (task != null)
-            {
-                return Ok(_mapper.Map<TaskObjGetDto>(task));
-            }
             return NotFound();
         }
         /* HttpPost creates new instance*/
@@ -65,12 +59,17 @@ namespace TaskService.Controllers
                 return StatusCode(500);
             }
             //EmployeeCreateDto tmp = JsonSerializer.Deserialize<EmployeeCreateDto>(employeeCreateDto.ToString());
-            Console.WriteLine($"Http POST recieved with data:");
-            Console.WriteLine($"{taskCreateDto.TaskName}");
-            Console.WriteLine($"{taskCreateDto.Description}");
-            Console.WriteLine($"{taskCreateDto.StartDate.ToLongDateString()}");
-            Console.WriteLine($"{taskCreateDto.EstimatedDays}");
-            Console.WriteLine($"{taskCreateDto.CustomerGuid.ToString()}");
+            PawLogger.DoLog($"Http POST recieved with data:");
+            PawLogger.DoLog($"{taskCreateDto.TaskName}");
+            PawLogger.DoLog($"{taskCreateDto.Description}");
+            PawLogger.DoLog($"{taskCreateDto.StartDate.ToLongDateString()}");
+            PawLogger.DoLog($"{taskCreateDto.EstimatedHours}");
+            PawLogger.DoLog($"{taskCreateDto.CustomerGuid.ToString()}");
+            List<TaskXEmployeeDto> emps = taskCreateDto.Employees;
+            foreach(TaskXEmployeeDto emp in emps)
+            {
+                PawLogger.DoLog("emp:" + emp.EmployeeGuid);
+            }
 
             /*
              * Remember to calculate end data (use Util.CalcEndDate)

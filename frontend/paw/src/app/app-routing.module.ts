@@ -7,13 +7,18 @@ import { PawCustomerformComponent } from './paw-customerform/paw-customerform.co
 import { PawHomeComponent } from './paw-home/paw-home.component';
 import { PawLogonComponent } from './paw-logon/paw-logon.component';
 import { PawNoAccessComponent } from './paw-no-access/paw-no-access.component';
+import { PawTaskformComponent } from './paw-taskform/paw-taskform.component';
+import { AuthGuard } from './shared/auth.guard';
+import { PawTasklistComponent } from './paw-tasklist/paw-tasklist.component';
 
 const routes: Routes = [
   {path : 'logon', component: PawLogonComponent},
-  {path : 'home', component: PawHomeComponent},
-  {path : 'employee', component: PawEmployeeComponent},
-  {path : 'customer', component: PawCustomerformComponent},
-  {path : 'no-access', component: PawNoAccessComponent},
+  {path : 'home', component: PawHomeComponent,  canActivate:[AuthGuard]},
+  {path : 'employee', component: PawEmployeeComponent,  canActivate:[AuthGuard]},
+  {path : 'customer', component: PawCustomerformComponent,  canActivate:[AuthGuard]},
+  {path : 'task', component: PawTaskformComponent,  canActivate:[AuthGuard]},
+  {path : 'no-access', component: PawNoAccessComponent,  canActivate:[AuthGuard]},
+  {path : 'tasklist', component: PawTasklistComponent,  canActivate:[AuthGuard]},
   {path: '', redirectTo: 'logon', pathMatch: 'full' }
 
 ];

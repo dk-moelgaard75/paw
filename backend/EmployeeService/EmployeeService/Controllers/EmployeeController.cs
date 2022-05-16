@@ -3,7 +3,10 @@ using EmployeeService.AsyncDataServices;
 using EmployeeService.Data;
 using EmployeeService.DTOs;
 using EmployeeService.Models;
+using EmployeeService.Utils;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +15,7 @@ using System.Threading.Tasks;
 
 namespace EmployeeService.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     public class EmployeeController : ControllerBase
     {
@@ -27,6 +31,7 @@ namespace EmployeeService.Controllers
             _mapper = mapper;
             _messageBusClient = msgBusClient;
         }
+
         [HttpGet(Name="GetAll")]
         public ActionResult<IEnumerable<EmployeeGetDto>> GetAll()
         {
@@ -47,6 +52,8 @@ namespace EmployeeService.Controllers
             return NotFound();
             //return JsonSerializer.Serialize(emp);
         }
+
+
         /* HttpPost creates new instance*/
         [HttpPost]
         public ActionResult<EmployeeGetDto> Post([FromBody] EmployeeCreateDto employeeCreateDto)
