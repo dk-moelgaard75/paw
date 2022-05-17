@@ -34,7 +34,7 @@ namespace EmployeeService
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            Console.WriteLine("Employee service start:" + DateTime.Now);
+            PawLogger.DoLog("Employee service start:" + DateTime.Now);
             
             services.AddSingleton<IConfiguration>(Configuration);
 

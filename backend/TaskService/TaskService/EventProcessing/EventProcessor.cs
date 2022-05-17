@@ -9,20 +9,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
+using TaskService.Data;
+using TaskService.DTOs;
 
-namespace EmployeeService.EventProcessing
+namespace TaskService.EventProcessing
 {
     public class EventProcessor : IEventProcessor
     {
         private readonly IServiceScopeFactory _scopeFactory;
         private readonly IMapper _mapper;
 
-        public EventProcessor(IServiceScopeFactory scopeFactory, IMapper mapper)
+        public EventProcessor(IServiceScopeFactory scopeFactory, AutoMapper.IMapper mapper)
         {
             _scopeFactory = scopeFactory;
             _mapper = mapper;
         }
 
+        /*
         public List<EmployeePublishedDto> GetEmployees(CalenderRequestDto message)
         {
             List<EmployeePublishedDto> list = GetEmployeesFromDB(message);
@@ -33,6 +36,7 @@ namespace EmployeeService.EventProcessing
             List<EmployeePublishedDto> list = GetEmployeesFromDB(message);
             return list.First();
         }
+        
 
         public PawEnums.EventType DetermineEvent(CalenderRequestDto notifcationMessage)
         {
@@ -47,6 +51,7 @@ namespace EmployeeService.EventProcessing
                 return PawEnums.EventType.RequestSpecific;
             }
         }
+        
         //This metode can handle both GetEmployee and GetEmployees based on the content of the message
         private List<EmployeePublishedDto> GetEmployeesFromDB(CalenderRequestDto notifcationMessage)
         {
@@ -66,11 +71,19 @@ namespace EmployeeService.EventProcessing
                 foreach (Employee emp in employees)
                 {
                     EmployeePublishedDto dto = _mapper.Map<EmployeePublishedDto>(emp);
-                    dto.CalendarGuid = Guid.Parse(notifcationMessage.CalendarGuid;
                     list.Add(dto);
                 }
             }
             return list;
         }
-    }
+        */
+
+        public List<TaskObjPublishedDto> GetTasks(CalenderRequestDto dto)
+        {
+            using (var scope = _scopeFactory.CreateScope())
+            {
+                var repo = scope.ServiceProvider.GetRequiredService<ITaskObjRepository>();
+                repo.
+            }
+        }
 }

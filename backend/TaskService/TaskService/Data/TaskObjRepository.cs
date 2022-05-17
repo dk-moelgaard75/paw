@@ -36,6 +36,12 @@ namespace TaskService.Data
             return _context.TaskObjs.ToList();
         }
 
+        public IEnumerable<TaskXEmployee> GetAllEmployees(Guid taskGuid)
+        {
+            return _context.TaskXEmployee.Where(p => p.TaskGuid.Equals(taskGuid));
+            
+        }
+
         public TaskObject GetByGuid(Guid customerGuid)
         {
             return _context.TaskObjs.FirstOrDefault(p => p.CustomerGuid.Equals(customerGuid));

@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-calendar
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres-calendar
+  template:
+    metadata:
+      labels:
+        app: postgres-calendar
+    spec:
+      containers:
+        - name: postgres-calendar
+          image: postgres:10.1
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: calendar
+            - name: POSTGRES_USER
+              value: calendar
+            - name: POSTGRES_PASSWORD
+              value: calendar
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/calendar/data
+              name: postgres-calendar-pv-claim
+      volumes:
+      - name: postgres-calendar-pv-claim
+        persistentVolumeClaim:
+          claimName: postgres-calendar-pv-claim
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-calendar-clusterip-srv
+spec:
+  type: ClusterIP
+  selector:
+    app: postgres-calendar
+  ports:
+  - name: postgres-calendar
+    protocol: TCP
+    port: 5432
+    targetPort: 5432 

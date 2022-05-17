@@ -14,5 +14,7 @@ namespace TaskService.Data
 		TaskObject GetByGuid(Guid customerGuid);
 		void Update(TaskObject modifiedEntity);
 		void Delete(TaskObject entityToDelete);
+
+		IEnumerable<TaskXEmployee> GetAllEmployees(Guid taskGuid);
 	}
 }

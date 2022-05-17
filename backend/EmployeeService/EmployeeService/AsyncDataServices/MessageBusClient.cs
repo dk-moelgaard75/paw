@@ -13,6 +13,7 @@ namespace EmployeeService.AsyncDataServices
 {
     public class MessageBusClient : IMessageBusClient
     {
+        //This class is responsible for sending messages to the calendarservice
         private IConfiguration _configuration;
 
         public MessageBusClient(IConfiguration configuration)

@@ -48,6 +48,7 @@ export class AuthenticationService {
             console.log("family_name: " + tokenData.family_name);
             console.log("email: " + tokenData.email);
             console.log("role: " + tokenData.role);
+            console.log("UID: " + tokenData.nameid);
             this.currentUser = tokenData.given_name
             return data; 
             

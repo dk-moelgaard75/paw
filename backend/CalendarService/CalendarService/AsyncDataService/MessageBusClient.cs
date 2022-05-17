@@ -50,9 +50,9 @@ namespace CalendarService.AsyncDataService
             }
         }
 
-        public void RequestEmployees()
+        public void RequestEmployees(string calendarGuid)
         {
-            EmployeeGetDto empGetDto = new EmployeeGetDto() { SearchField = "ALL", SearchValue = "ALL" };
+            EmployeeGetDto empGetDto = new EmployeeGetDto() { SearchField = "ALL", SearchValue = "ALL", CalendarGuid = calendarGuid };
             var message = JsonSerializer.Serialize(empGetDto);
             if (RabbitMqUtil.RabbitMQConnection.IsOpen)
             {
@@ -63,7 +63,6 @@ namespace CalendarService.AsyncDataService
             {
                 PawLogger.DoLog("TaskService - RabbitMQ connection is NOT open - NO message sent");
             }
-
         }
         private void SendEmployeeMessage(string message)
         {
@@ -72,7 +71,7 @@ namespace CalendarService.AsyncDataService
                                                       routingKey: _configuration["RabbitMQRoutingKeyEmployeeOutgoing"],
                                                         basicProperties:  null,
                                                         body: messageBody);
-            PawLogger.DoLog("Taskservice - message sent thru RabbitMQ");
+            PawLogger.DoLog("Taskservice - SendEmployeeMessage message - sent thru RabbitMQ");
         }
 
         public void RequestTasks()
@@ -80,10 +79,32 @@ namespace CalendarService.AsyncDataService
             throw new NotImplementedException();
         }
 
-        public void RequestTask(DateTime startDate)
+        public void RequestTask(DateTime startDate, string calendarGuid)
         {
-            throw new NotImplementedException();
+            TaskObjGetDto taskGetDto = new TaskObjGetDto() { StartDate = startDate, CalendarGuid = calendarGuid };
+            var message = JsonSerializer.Serialize(taskGetDto);
+            if (RabbitMqUtil.RabbitMQConnection.IsOpen)
+            {
+                PawLogger.DoLog("CalenddarService - RequestTask - RabbitMQ connection is open - requesting all tasks after:" + startDate.ToString("d"));
+                SendTaskMessage(message);
+            }
+            else
+            {
+                PawLogger.DoLog("TaskService - RabbitMQ connection is NOT open - NO message sent");
+            }
+
         }
+        private void SendTaskMessage(string message)
+        {
+            var messageBody = Encoding.UTF8.GetBytes(message);
+            RabbitMqUtil.EmployeeChannelOutgoing.BasicPublish(exchange: _configuration["RabbitMQExchange"],
+                                                      routingKey: _configuration["RabbitMQRoutingKeyTaskOutgoing"], 
+                                                        basicProperties: null,
+                                                        body: messageBody);
+            PawLogger.DoLog("Taskservice - SendTaskMessage - message sent thru RabbitMQ");
+        }
+
+
         public void Dispose()
         {
             PawLogger.DoLog("TaskService - MessageBus dispose");

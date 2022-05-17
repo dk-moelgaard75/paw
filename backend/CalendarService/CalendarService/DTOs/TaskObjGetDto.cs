@@ -7,5 +7,8 @@ namespace CalendarService.DTOs
 {
     public class TaskObjGetDto
     {
+        public DateTime StartDate { get; set; }
+        public string CalendarGuid { get; set; }
+
     }
 }

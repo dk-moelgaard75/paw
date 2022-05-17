@@ -8,6 +8,6 @@ namespace TaskService.AsyncDataServices
 {
     public interface IMessageBusClient
     {
-        void PublishNewTask(TaskObjPublishedDto taskObjPublishedDto);
+        void PublishNewTask(List<TaskObjPublishedDto> taskObjPublishedDto);
     }
 }

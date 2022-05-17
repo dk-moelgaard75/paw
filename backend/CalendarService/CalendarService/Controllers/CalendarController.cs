@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CalendarService.AsyncDataService;
+using CalendarService.EventProcessing;
+using CalendarService.DTOs;
 
 namespace CalendarService.Controllers
 {
@@ -13,15 +15,29 @@ namespace CalendarService.Controllers
     public class CalendarController : ControllerBase
     {
         private readonly IMessageBusClient _messageBusClient;
-        public CalendarController(IMessageBusClient msgBusClient)
+        private readonly IEventProcessor _eventProcessor;
+        public CalendarController(IMessageBusClient msgBusClient, IEventProcessor processor)
         {
             _messageBusClient = msgBusClient;
+            _eventProcessor = processor;
         }
-        [HttpGet]
-        public string GetCalendar()
+        [HttpGet("{string:id}", Name="GetCalendar")]
+        public IActionResult GetCalendar(string guid)
         {
-            _messageBusClient.RequestEmployees();
-            return "";
+            string html = _eventProcessor.GetCalendarHtml(guid);
+            if (html == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(html);
+        }
+        [HttpPost]
+        public IActionResult Post([FromBody] TaskObjGetDto dto)
+        {
+            _messageBusClient.RequestEmployees(dto.CalendarGuid);
+            _messageBusClient.RequestTask(dto.StartDate, dto.CalendarGuid);
+            return Ok();
         }
     }
 }

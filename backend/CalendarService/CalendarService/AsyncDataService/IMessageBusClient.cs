@@ -7,10 +7,10 @@ namespace CalendarService.AsyncDataService
 {
     public interface IMessageBusClient
     {
-        void RequestEmployees();
+        void RequestEmployees(string calendarGuid);
         void RequestEmployee(string searchField, string searchValue);
         void RequestTasks();
-        void RequestTask(DateTime startDate);
+        void RequestTask(DateTime startDate, string calendarGuid);
 
     }
 }

@@ -12,13 +12,18 @@ using System.Text;
 using RabbitMQ.Client;
 using System.Text.Json;
 using CalendarService.DTOs;
+using CalendarService.Data;
+using CalendarService.EventProcessing;
 
 namespace CalendarService.AsyncDataService
 {
     public class MessageBusSubscriber : BackgroundService
     {
         private IConfiguration _configuration;
-        public MessageBusSubscriber(IConfiguration configuration)
+        private IMessageBusClient _messageBusClient;
+        private IEventProcessor _eventProcessor;
+
+        public MessageBusSubscriber(IConfiguration configuration, ICalendarRepository calendarRepository)
         {
             _configuration = configuration;
             RabbitMqUtil.Initialize(_configuration);
@@ -43,6 +48,7 @@ namespace CalendarService.AsyncDataService
                         PawLogger.DoLog(dto.FirstName);
                         PawLogger.DoLog(dto.LastName);
                         PawLogger.DoLog(dto.Email);
+                        PawLogger.DoLog(dto.CalendarGuid.ToString());
                     }
                 };
                 RabbitMqUtil.EmployeeChannelIncomming.BasicConsume(queue: RabbitMqUtil.EmployeeQueueNameIncomming, autoAck: true, consumer: consumerEmployeeIncomming);

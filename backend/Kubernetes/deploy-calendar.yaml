@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: calendar-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: calendarservice
+  template:
+    metadata:
+      labels:
+        app: calendarservice
+    spec:
+      containers:
+        - name: calendarservice
+          image: dkmoelgaard75/calendarservice:latest
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: calendar-clusterip-srv
+spec:
+  type: ClusterIP
+  selector:
+    app: calendarservice
+  ports:
+  - name: calendarservice
+    protocol: TCP
+    port: 80
+    targetPort: 80

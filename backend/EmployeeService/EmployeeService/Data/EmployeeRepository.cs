@@ -69,6 +69,7 @@ namespace EmployeeService.Data
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var tokenKey = Encoding.UTF8.GetBytes(_configuration["JWT:Key"]);
+            
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new Claim[]
@@ -77,7 +78,8 @@ namespace EmployeeService.Data
                     new Claim(ClaimTypes.GivenName, emp.FirstName),
                     new Claim(ClaimTypes.Role, emp.EmployeeType),
                     new Claim(ClaimTypes.Email, emp.Email),
-                    new Claim(ClaimTypes.Surname, emp.LastName)
+                    new Claim(ClaimTypes.Surname, emp.LastName),
+                    new Claim(ClaimTypes.NameIdentifier, emp.UID.ToString()),
                 }),
                 Expires = DateTime.UtcNow.AddDays(1),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(tokenKey), SecurityAlgorithms.HmacSha256Signature)

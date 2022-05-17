@@ -10,22 +10,17 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Text.Json;
-using EmployeeService.DTOs;
-using EmployeeService.EventProcessing;
+using TaskService.DTOs;
+using TaskService.EventProcessing;
+using TaskService.AsyncDataServices;
 
-namespace EmployeeService.AsyncDataServices
+namespace TaskService.AsyncDataServices
 {
     public class MessageBusSubscriber : BackgroundService
     {
         private IConfiguration _configuration;
         private IMessageBusClient _messageBusClient;
         private IEventProcessor _eventProcessor;
-
-        /*
-private IConnection _connection;
-private IModel _channel;
-private string _queueName;
-*/
 
         public MessageBusSubscriber(IConfiguration configuration, 
                                     IMessageBusClient msgBusClient,
@@ -44,15 +39,14 @@ private string _queueName;
                 var consumer = new EventingBasicConsumer(RabbitMqUtil.CalenderChannelIncomming);
                 consumer.Received += (ModuleHandle, ea) =>
                 {
-                    PawLogger.DoLog("EmployeeService - MessageBusSubscribe - event received:");
+                    PawLogger.DoLog("TaskService - MessageBusSubscribe - event received:");
                     var body = ea.Body;
                     var data = Encoding.UTF8.GetString(body.ToArray());
                     PawLogger.DoLog("Data: " + data);
                     CalenderRequestDto message = JsonSerializer.Deserialize<CalenderRequestDto>(data);
-                    PawLogger.DoLog("Message - searchField: " + message.SearchField);
-                    PawLogger.DoLog("Message - searchValue: " + message.SearchValue);
-                    PawLogger.DoLog("Message - searchValue: " + message.SearchValue);
-                    _messageBusClient.PublishEmployees(_eventProcessor.GetEmployees(message));
+                    PawLogger.DoLog("Message - StartDate: " + message.StartDate);
+                    PawLogger.DoLog("Message - CalendarGuid: " + message.CalendarGuid);
+                    _messageBusClient.PublishNewTask(_eventProcessor.GetTasks(message));
                 };
                 RabbitMqUtil.CalenderChannelIncomming.BasicConsume(queue: RabbitMqUtil.CalenderQueueNameIncomming, autoAck: true, consumer: consumer);
             }

@@ -9,5 +9,6 @@ namespace CalendarService.DTOs
     {
         public string SearchField { get; set; }
         public string SearchValue { get; set; }
+        public string CalendarGuid { get; set; }
     }
 }

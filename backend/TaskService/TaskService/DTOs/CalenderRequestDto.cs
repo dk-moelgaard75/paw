@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace EmployeeService.DTOs
+namespace TaskService.DTOs
 {
     public class CalenderRequestDto
     {
-        public string SearchField { get; set; }
-        public string SearchValue { get; set; }
+        public DateTime StartDate { get; set; }
         public string CalendarGuid { get; set; }
+
     }
 }

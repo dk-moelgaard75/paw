@@ -18,6 +18,7 @@ namespace TaskService.AsyncDataServices
         private IModel _channel;
         private string RabbitMQEchangeString = "trigger";
 
+        /*
         public MessageBusClient(IConfiguration configuration)
         {
             _configuration = configuration;
@@ -41,6 +42,12 @@ namespace TaskService.AsyncDataServices
                 PawLogger.DoLog($"--> Could not connect to message bus: {ex.Message}");
             }
         }
+        */
+        public MessageBusClient(IConfiguration configuration)
+        {
+            _configuration = configuration;
+            RabbitMqUtil.Initialize(_configuration);
+        }
 
         private void RabbitMQ_ConnectionShutdown(object sender, ShutdownEventArgs e)
         {
@@ -51,7 +58,7 @@ namespace TaskService.AsyncDataServices
         public void PublishNewTask(TaskObjPublishedDto taskObjPublishedDto)
         {
             var message = JsonSerializer.Serialize(taskObjPublishedDto);
-            if (_connection.IsOpen)
+            if (RabbitMqUtil.CalenderChannelOutgoing.IsOpen)
             {
                 PawLogger.DoLog("TaskService - RabbitMQ connection is open - sending message");
                 //TODO - send message
