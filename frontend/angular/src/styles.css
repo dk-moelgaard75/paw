@@ -1,0 +1,6 @@
+@import "~bootstrap/dist/css/bootstrap.css";
+@import "~bootstrap-icons/font/bootstrap-icons.css";
+.mainpadding {
+    padding-top: 60px;
+    padding-left: 20px;
+}
