@@ -18,6 +18,8 @@ namespace EmployeeService.DTOs
         
         public string EmployeeType { get; set; }
         public string Password { get; set; }
+        
+        public Guid UID { get; set; }
     }
 
 }

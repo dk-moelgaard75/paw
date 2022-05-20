@@ -37,19 +37,21 @@ export class EmployeeService {
 
   // HttpClient API get() method => Fetch employeeslist
   //Authorization", "Bearer " + this.apiToken
+
   getEmployees(): Observable<HttpResponse<IEmployee[]>> {
     return this.http
       .get<IEmployee[]>(
         this.apiURL + '/employee',
         {headers: new HttpHeaders({'Content-Type':  'application/json', 'Authorization' : 'Bearer ' + this.apiToken}),observe: 'response'}
-        
         )
       .pipe(retry(1), catchError(this.handleError)); 
   }
-  getEmployeesWithHeader() : Observable<HttpResponse<IEmployee[]>>{
+
+
+  getEmployeesWithoutHeader() : Observable<IEmployee[]>{
     return this.http.get<IEmployee[]>(
       this.apiURL +'/employee/',
-      {headers: new HttpHeaders({'Content-Type':  'application/json', 'Authorization' : 'Bearer ' + this.apiToken}),observe: 'response'}).
+      {headers: new HttpHeaders({'Content-Type':  'application/json', 'Authorization' : 'Bearer ' + this.apiToken})}).
       pipe(retry(1),catchError(this.handleError));
   }
 

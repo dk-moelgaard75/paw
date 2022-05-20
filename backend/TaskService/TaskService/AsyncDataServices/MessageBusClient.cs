@@ -1,4 +1,4 @@
-﻿using EmployeeService.Utils;
+﻿using TaskService.Utils;
 using Microsoft.Extensions.Configuration;
 using RabbitMQ.Client;
 using System;
@@ -69,6 +69,23 @@ namespace TaskService.AsyncDataServices
                 PawLogger.DoLog("TaskService - RabbitMQ connection is NOT open - NO message sent");
             }
         }
+        public void PublishNewTask(List<TaskObjPublishedDto> taskObjPublishedDto)
+        {
+            var message = JsonSerializer.Serialize(taskObjPublishedDto);
+            if (RabbitMqUtil.CalenderChannelOutgoing.IsOpen)
+            {
+                PawLogger.DoLog("TaskService - RabbitMQ connection is open - sending message:");
+                PawLogger.DoLog(message);
+                //TODO - send message
+                SendMessage(message);
+            }
+            else
+            {
+                PawLogger.DoLog("TaskService - RabbitMQ connection is NOT open - NO message sent");
+            }
+
+        }
+
         private void SendMessage(string message)
         {
             var messageBody = Encoding.UTF8.GetBytes(message);
@@ -87,5 +104,6 @@ namespace TaskService.AsyncDataServices
                 _connection.Close();
             }
         }
+
     }
 }

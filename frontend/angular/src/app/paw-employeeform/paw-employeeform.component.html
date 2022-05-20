@@ -70,8 +70,8 @@
                             <option *ngFor="let empType of employeeTypeValue" [ngValue]="empType.id">{{empType.name}}</option>
                         </select>  
                         <div *ngIf="!inEditMode && employeetype?.touched && employeetype?.invalid" class="alert alert-danger">
-                        <div *ngIf="employeetype?.errors?.['required']" >Type skal angives - klik for at vælge</div>
-                    </div>                      
+                            <div *ngIf="employeetype?.errors?.['required']" >Type skal angives - klik for at vælge</div>
+                        </div>
                     </div>
                     <br />
                     <div *ngIf="!inEditMode && userIsValid">

@@ -20,7 +20,7 @@ namespace CalendarService.EventProcessing
             //_mapper = mapper;
             _htmlDictionary = new Dictionary<string, string>();
             //for test
-            _htmlDictionary.Add("3", testHtml());
+            _htmlDictionary.Add("3", TestHtml());
         }
 
         public string GetCalendarHtml(string guid)
@@ -31,7 +31,7 @@ namespace CalendarService.EventProcessing
             }
             return null;
         }
-        public void setCalendarHtml(string guid,string html)
+        public void SetCalendarHtml(string guid,string html)
         {
             if (_htmlDictionary.ContainsKey(guid))
             {
@@ -42,7 +42,7 @@ namespace CalendarService.EventProcessing
                 _htmlDictionary.Add(guid, html);
             }
         }
-        private string testHtml()
+        private string TestHtml()
         {
             StringBuilder sb = new StringBuilder();
             sb.Append("<table style='border: 1px solid black'>");

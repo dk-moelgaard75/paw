@@ -6,7 +6,7 @@
         <div class="col-8 mainpadding">
                 <form [formGroup]="taskForm" (ngSubmit)="createOrUpdateTask()">  
                     <div class="form-group">
-                        <label for="taskname">Opgave</label>
+                        <label for="taskname">Opgave navn</label>
                         <input 
                             formControlName="taskname"
                             id="taskname" 
@@ -16,4 +16,95 @@
                                 <div *ngIf="taskname?.errors?.['required']" >Opgaven skal have en title</div>
                             </div>
                     </div>
+                    <div class="form-group">
+                        <label for="taskdescription">Opgave beskrivelse</label>
+                        <input 
+                            formControlName="taskdescription"
+                            id="taskdescription" 
+                            type="text" 
+                            class="form-control">
+                            <div *ngIf="!inEditMode && taskdescription?.touched && taskdescription?.invalid" class="alert alert-danger">
+                                <div *ngIf="taskdescription?.errors?.['required']" >Opgaven skal have en beskrivelse</div>
+                            </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="taskstartdate">Startdato</label>
+                        <input 
+                            formControlName="taskstartdate"
+                            id="taskstartdate" 
+                            placeholder="yyyy-mm-dd"
+                            name="dp"
+                            ngbDatepicker  #d="ngbDatepicker"
+                            class="form-control">
+                            <div class="input-group-append">
+                                <button class="bi bi-calendar" (click)="d.toggle()" type="button"></button>
+                              </div>
+
+
+                              <div *ngIf="!inEditMode && taskstartdate?.touched && taskstartdate?.invalid" class="alert alert-danger">
+                                <div *ngIf="taskstartdate?.errors?.['required']" >Opgaven skal have en startdato</div>
+                            </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="taskstarttime">Starttidspunkt</label>
+                        <select 
+                            formControlName="taskstarttime"
+                            id="taskstarttime" 
+                            class="form-control">
+                            <option disabled>Vælg starttidspunkt</option>
+                            <option *ngFor="let time of startTimeList" [ngValue]="time.id">{{time.text}}</option>
+                        </select>
+                        <div *ngIf="!inEditMode && taskstarttime?.touched && taskstarttime?.invalid" class="alert alert-danger">
+                            <div *ngIf="taskstarttime?.errors?.['required']" >Opgaven skal have et starttidspunkt</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="taskestimatedhours">Forventede antal timer</label>
+                        <select 
+                            formControlName="taskestimatedhours"
+                            id="taskestimatedhours" 
+                            class="form-control">
+                            <option disabled>Vælg estimeret antal timer</option>
+                            <option *ngFor="let est of estimatetHoursList" [ngValue]="est" >{{est}}</option>
+                        </select>
+                        <div *ngIf="!inEditMode && taskestimatedhours?.touched && taskestimatedhours?.invalid" class="alert alert-danger">
+                            <div *ngIf="taskestimatedhours?.errors?.['required']" >Opgaven skal have et timeestimat</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="taskcustomer">Kunde</label>
+                        <select 
+                            formControlName="taskcustomer"
+                            id="taskcustomer"
+                            class="form-control">
+                            <option disabled>Vælg kunde</option>
+                            <option *ngFor="let customer of customers" [ngValue]="customer.uid">{{customer.firstName}} - {{customer.lastName}}</option>
+                        </select>  
+                        <div *ngIf="!inEditMode && taskcustomer?.touched && taskcustomer?.invalid" class="alert alert-danger">
+                            <div *ngIf="taskcustomer?.errors?.['required']" >Kunden skal angives - klik for at vælge</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="taskemployee">Medarbejder</label>
+                        <select  
+                            formControlName="taskemployee"
+                            id="taskemployee" 
+                            class="form-control">
+                            <option disabled>Vælg medarbejder</option>
+                            <option *ngFor="let emp of employees" [ngValue]="emp.uid">{{emp.firstName}} - {{emp.lastName}}</option>
+                        </select>
+                        <div *ngIf="!inEditMode && taskemployee?.touched && taskemployee?.invalid" class="alert alert-danger">
+                            <div *ngIf="taskemployee?.errors?.['required']" >Type skal angives - klik for at vælge</div>
+                        </div>
+                    </div>
+                    <div *ngIf="!inEditMode">
+                        <button class="btn btn-primary btn-sm" type="submit">Opret opgave</button>
+                    </div>
+                    <div class="form-group">
+                        <label>Status: </label>
+                        <label>{{getStatusLabel()}}</label>
+                    </div>
+    
 

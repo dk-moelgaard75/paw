@@ -1,8 +1,15 @@
+import { ITaskObj } from './../shared/ITaskObj';
+import { IStartTime } from './../shared/IStartTime';
+import { EmployeeService } from './../services/employee.service';
+import { IEmployee } from './../shared/IEmployee';
 import { CustomerService } from './../services/customer.service';
 import { ICustomer } from './../shared/ICustomer';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit,ChangeDetectorRef } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { TaskobjService } from '../services/taskobj.service';
+import { NgbDate, NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDatepicker } from '@ng-bootstrap/ng-bootstrap';
+import { HttpClient, HttpParams, HttpHeaders,HttpResponse,HttpEvent, HttpEventType } from '@angular/common/http';
 
 @Component({
   selector: 'app-paw-taskform',
@@ -12,42 +19,169 @@ import { TaskobjService } from '../services/taskobj.service';
 export class PawTaskformComponent implements OnInit {
   taskForm = new FormGroup({
     taskname: new FormControl('',Validators.required),
-    description: new FormControl('', Validators.required),
-    startdate: new FormControl('', Validators.required),
-    estimateddays: new FormControl('', Validators.required)
+    taskdescription: new FormControl('', Validators.required),
+    taskstartdate: new FormControl('', Validators.required),
+    taskstarttime: new FormControl('', Validators.required),
+    taskestimatedhours: new FormControl('', Validators.required),
+    taskcustomer: new FormControl('', Validators.required),
+    taskemployee: new FormControl('', Validators.required)
   });
-
   private _inEditMode : boolean = false;
+  public tasks: ITaskObj[] = [];
   private serviceStatus: string = "N/A";
   private taskService: TaskobjService;
   private customerService: CustomerService;
-  private customers: ICustomer[] = [];
+  private employeeService: EmployeeService;
+  public customers: ICustomer[] = [];
+  public employees: IEmployee[] = [];
+  public startTimeList : Array<IStartTime> =  [
+                                        {id: 8, text: 'Kl. 8'},
+                                        {id: 9, text: 'Kl. 9'},
+                                        {id: 10, text: 'Kl. 10'},
+                                        {id: 11, text: 'Kl. 11'},
+                                        {id: 12, text: 'Kl. 12'},
+                                        {id: 13, text: 'Kl. 13'},
+                                        {id: 14, text: 'Kl. 14'},
+                                        {id: 15, text: 'Kl. 15'},
+                                      ]
+                                    
+  public estimatetHoursList: number[] = [1,2,3,4,5,6,7];
+  //public employeeTypeValue = [{id:'employee', name:'Medarbejder'}, {id:'admin', name:'Administrator'}]; 
 
-  constructor(tskService: TaskobjService, custService: CustomerService) { 
+  constructor(tskService: TaskobjService, 
+            custService: CustomerService,
+            emplService: EmployeeService,
+            private changeDetection: ChangeDetectorRef) { 
     this.taskService = tskService;
     this.customerService = custService;
+    this.employeeService = emplService;
   }
 
   ngOnInit(): void {
     this.getCustomers();
+    this.getEmployees();
   }
   get taskname() {
     return this.taskForm.get('taskname')!;
   }
+  currentTaskname() {
+    return this.taskForm.get('taskname')!.value;
+  }
 
+  get taskdescription() {
+    return this.taskForm.get('taskdescription')!;
+  }
+  currentTaskdescription(){
+    return this.taskForm.get('taskdescription')!.value;
+  }
+
+  get taskstartdate() {
+    return this.taskForm.get('taskstartdate')!;
+  }
+  currentTaskstartdate(){
+    let curDate = this.taskForm.get('taskstartdate')!.value;
+    console.log(curDate);
+    let curY = curDate.year;
+    let curM = this.addLeadingZeros(curDate.month, 2);
+    let curD = this.addLeadingZeros(curDate.day, 2);
+    let newDate = curY + "-" + curM + "-" + curD;
+    console.log(newDate);
+    return newDate;
+  }
+  addLeadingZeros(num: number, totalLength: number): string {
+    return String(num).padStart(totalLength, '0');
+  }
+  get taskstarttime() {
+    return this.taskForm.get('taskstarttime')!;
+  }
+  currentTaskstarttime(){
+    return this.taskForm.get('taskstarttime')!.value;
+  }
+  get taskestimatedhours() {
+    return this.taskForm.get('taskestimatedhours')!;
+  }
+  currentTaskestimatedhours(){
+    return this.taskForm.get('taskestimatedhours')!.value;
+  }
+
+
+  get taskcustomer() {
+    return this.taskForm.get('taskcustomer')!;
+  }
+  currentTaskcustomer(){
+    return this.taskForm.get('taskcustomer')!.value;
+  }
+
+  get taskemployee() {
+    return this.taskForm.get('taskemployee')!;
+  }
+  currentTaskemployee(){
+    return this.taskForm.get('taskemployee')!.value;
+  }
+  
   get inEditMode() {
     return this._inEditMode;
   }
 
+  getStatusLabel() {
+    return this.serviceStatus;
+  }
+
   getCustomers() {
     this.customerService.getCustomers().subscribe((data: ICustomer[]) => {
-      
-      this.customers.splice(0);
-      this.customers = [... data];
-      //look at: https://stackoverflow.com/questions/45239739/angular2-ngfor-does-not-update-when-array-is-updated
-      console.log("getCustomers returned:" + this.customers.length)
+      this.customers = data
     });
   }
+  getEmployees() {
+    this.employeeService.getEmployeesWithoutHeader().subscribe((data: IEmployee[]) => {
+      console.log('TaskForm - getEmployees');
+      console.log(data);
+      this.employees = data;
+    });
+  }
+
   createOrUpdateTask() {
+    console.log('createOrUpdateTask kaldt - editMode:' + this._inEditMode);
+    let post = {'taskName': this.currentTaskname(), 
+                'description': this.currentTaskdescription(), 
+                'startDate': this.currentTaskstartdate(), 
+                'starthour': this.currentTaskstarttime(),
+                'estimatedhours': this.currentTaskestimatedhours(),
+                'customerGuid': this.currentTaskcustomer(),
+                'Employee': this.currentTaskemployee()} as ITaskObj;
+    console.log(post); 
+    console.log(JSON.stringify(post));
+    if (!this._inEditMode) {
+      this.taskService.createTask(post).subscribe((response: HttpResponse<ITaskObj>)=> {
+        if (response != null && response.ok)
+        {
+          this.serviceStatus = "Opgave oprettet";
+          console.log("response",response)
+          console.log("OK",response.ok)
+          console.log("Location", response.headers.get('Location'));
+          this.tasks.push(response.body as ITaskObj)
+        }
+        else {
+          this.serviceStatus = "Fejl opstået:" + response.statusText;
+        }
+      });
+    }
+    /*
+    TODO - missing implementation
+    else {
+      this.taskService.updateEmployeeWithHeader(this.curEmployeeId,post).subscribe((response: HttpResponse<IEmployee>) => {
+        if (response.ok) {
+          this.serviceStatus = "Brugeren opdateret";
+          this.employees = [];
+          this.getEmployees();
+          this.changeDetection.detectChanges();
+        }
+        else {
+          this.serviceStatus = "Fejl opstået:" + response.statusText;
+        }
+      })
+      
+    } 
+    */
   }
 }

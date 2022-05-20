@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace EmployeeService.Utils
+namespace TaskService.Utils
 {
     public static class PawLogger
     {

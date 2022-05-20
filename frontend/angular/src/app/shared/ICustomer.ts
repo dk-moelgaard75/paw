@@ -7,4 +7,5 @@ export interface ICustomer {
     address: string;
     zip: number;
     country: string;
+    uid: string;
 }

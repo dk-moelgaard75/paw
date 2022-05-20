@@ -10,7 +10,6 @@ using TaskService.Models;
 using TaskService.Data;
 using TaskService.Utils;
 using TaskService.AsyncDataServices;
-using EmployeeService.Utils;
 
 namespace TaskService.Controllers
 {
@@ -21,7 +20,7 @@ namespace TaskService.Controllers
         private readonly IMapper _mapper;
         private readonly IMessageBusClient _messageBusClient;
 
-        public TaskController(ITaskObjRepository taskObjRepository, 
+        public TaskController(ITaskObjRepository taskObjRepository,
                                 IMapper mapper,
                                 IMessageBusClient msgBusClient)
         {
@@ -32,13 +31,14 @@ namespace TaskService.Controllers
         [HttpGet(Name = "Get")]
         public ActionResult Get()
         {
-
             return Ok();
         }
+                
+
         [HttpGet("{id}", Name = "GetById")]
         public ActionResult<TaskObjGetDto> GetById(Guid id)
         {
-            Console.WriteLine($"TaskService - Http GET recieved with ID: {id}");
+            PawLogger.DoLog($"TaskService - Http GET recieved with ID: {id}");
             return NotFound();
         }
         /* HttpPost creates new instance*/
@@ -51,7 +51,7 @@ namespace TaskService.Controllers
              * But it is in TaskObjGetDto since it´s returned to the frontend
              * 
              */
-            System.Diagnostics.Debug.WriteLine("TaskService - post");
+            PawLogger.DoLog("TaskService - post");
             if (taskCreateDto == null)
             {
                 //Console.WriteLine($"CustomerCreateDto is null:");
@@ -65,11 +65,6 @@ namespace TaskService.Controllers
             PawLogger.DoLog($"{taskCreateDto.StartDate.ToLongDateString()}");
             PawLogger.DoLog($"{taskCreateDto.EstimatedHours}");
             PawLogger.DoLog($"{taskCreateDto.CustomerGuid.ToString()}");
-            List<TaskXEmployeeDto> emps = taskCreateDto.Employees;
-            foreach(TaskXEmployeeDto emp in emps)
-            {
-                PawLogger.DoLog("emp:" + emp.EmployeeGuid);
-            }
 
             /*
              * Remember to calculate end data (use Util.CalcEndDate)
@@ -96,6 +91,13 @@ namespace TaskService.Controllers
 
                 //Map the DbContext object to a DTO object (removing potential personal or otherwise sensitive data)
                 taskObjGetDto = _mapper.Map<TaskObjGetDto>(taskModel);
+
+                TaskXEmployee taskX = new TaskXEmployee();
+                taskX.EmployeeGuid = taskModel.Employee;
+                taskX.TaskGuid = taskModel.TaskGuid;
+                _taskObjRepository.CreateEmployee(taskX);
+                
+
             }
             catch (Exception ex)
             {
@@ -105,6 +107,27 @@ namespace TaskService.Controllers
 
             return CreatedAtRoute(nameof(GetById), new { Id = taskObjGetDto.Id }, taskObjGetDto);
         }
+
+
+        /*
+         * These are keept for educational purpose - shows how to have serveral GET´s on the same contoller
+         * 
+        [HttpGet("rtest1/", Name = "GetRouteTest")] //URL: /api/task/rtest1/
+        
+        public ActionResult GetRouteTest()
+        {
+            PawLogger.DoLog("GetRouteTest");
+            return Ok();
+        }
+        [HttpGet("rtest2/{id}",Name = "GetRouteTestWithId")] URL: /api/task/rtest2/00000000-0000-0000-0000-000000000000
+        
+        public ActionResult GetRouteTestWithId(Guid id)
+        {
+            PawLogger.DoLog("GetRouteTestWithId:" + id.ToString());
+            return Ok();
+        }
+        */
+
 
     }
 }

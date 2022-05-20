@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using TaskService.Data;
@@ -9,9 +10,10 @@ using TaskService.Data;
 namespace TaskService.Migrations
 {
     [DbContext(typeof(TaskObjDbContext))]
-    partial class TaskObjDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220520145539_updateddbmodel")]
+    partial class updateddbmodel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

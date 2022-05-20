@@ -1,16 +1,14 @@
 ﻿using AutoMapper;
-using EmployeeService.Data;
-using EmployeeService.DTOs;
-using EmployeeService.Models;
-using EmployeeService.Utils;
+using TaskService.Data;
+using TaskService.DTOs;
+using TaskService.Models;
+using TaskService.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
-using TaskService.Data;
-using TaskService.DTOs;
 
 namespace TaskService.EventProcessing
 {
@@ -80,10 +78,18 @@ namespace TaskService.EventProcessing
 
         public List<TaskObjPublishedDto> GetTasks(CalenderRequestDto dto)
         {
+            List<TaskObjPublishedDto> newList = null;
             using (var scope = _scopeFactory.CreateScope())
             {
                 var repo = scope.ServiceProvider.GetRequiredService<ITaskObjRepository>();
-                repo.
+                IEnumerable<TaskObjPublishedDto> list = _mapper.Map<IEnumerable<TaskObjPublishedDto>>(repo.GetByStartDate(dto.StartDate));
+                newList = list.ToList();
+                foreach (TaskObjPublishedDto obj in newList)
+                {
+                    obj.CalendarGuid = Guid.Parse(dto.CalendarGuid);
+                }
             }
+            return newList;
         }
+    }
 }

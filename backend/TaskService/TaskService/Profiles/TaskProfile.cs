@@ -22,7 +22,8 @@ namespace TaskService.Profiles
 
             CreateMap<TaskObjCreateDto, TaskObject>();
             
-            CreateMap<TaskObjGetDto, TaskObjPublishedDto>();
+            //CreateMap<TaskObjGetDto, TaskObjPublishedDto>();
+            CreateMap<TaskObject, TaskObjPublishedDto>();
         }
     }
 }

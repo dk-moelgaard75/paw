@@ -8,7 +8,8 @@ import { Observable, throwError } from 'rxjs';
   providedIn: 'root'
 })
 export class TaskobjService {
-  apiURL = 'http://acme.com/api';
+  //apiURL = 'http://paw.dk/api';
+  apiURL = 'https://localhost:44324/api';
 
   constructor(private http: HttpClient) {}
   /*========================================
@@ -38,7 +39,7 @@ export class TaskobjService {
   createTask(taskObj: ITaskObj): Observable<HttpResponse<ITaskObj>> {
     return this.http
       .post<ITaskObj>(
-        this.apiURL + '/task',
+        this.apiURL + '/task/',
         JSON.stringify(taskObj),
         {headers: new HttpHeaders({'Content-Type':  'application/json'}),observe: 'response'}
       )

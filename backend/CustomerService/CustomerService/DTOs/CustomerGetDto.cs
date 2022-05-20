@@ -21,5 +21,7 @@ namespace CustomerService.DTOs
 
         public string Country { get; set; }
 
+        public Guid UID { get; set; }
+
     }
 }

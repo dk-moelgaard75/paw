@@ -10,11 +10,19 @@ namespace TaskService.Data
     {
 		int Create(TaskObject newEntity);
 		IEnumerable<TaskObject> GetAll();
+		IEnumerable<TaskObject> GetByStartDate(DateTime startDate);
 		TaskObject GetById(int id);
-		TaskObject GetByGuid(Guid customerGuid);
+		TaskObject GetByCustomerGuid(Guid customerGuid);
+		TaskObject GetByTaskGuid(Guid taskGuid);
 		void Update(TaskObject modifiedEntity);
 		void Delete(TaskObject entityToDelete);
 
+
+		int CreateEmployee(TaskXEmployee newEntity);
 		IEnumerable<TaskXEmployee> GetAllEmployees(Guid taskGuid);
+		TaskXEmployee GetEmployeeByGuid(Guid customerGuid);
+		void UpdateEmployee(TaskXEmployee modifiedEntity);
+		void DeleteEmployee(TaskXEmployee entityToDelete);
+
 	}
 }

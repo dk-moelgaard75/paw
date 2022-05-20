@@ -10,7 +10,7 @@ namespace CalendarService.AsyncDataService
         void RequestEmployees(string calendarGuid);
         void RequestEmployee(string searchField, string searchValue);
         void RequestTasks();
-        void RequestTask(DateTime startDate, string calendarGuid);
+        void RequestTasks(DateTime startDate, string calendarGuid);
 
     }
 }

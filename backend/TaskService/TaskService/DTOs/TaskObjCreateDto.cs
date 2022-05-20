@@ -25,6 +25,6 @@ namespace TaskService.DTOs
         [Required]
         public Guid CustomerGuid { get; set; }
 
-        public List<TaskXEmployeeDto> Employees { get; set; }
+        public Guid Employee { get; set; }
     }
 }

@@ -17,7 +17,7 @@ namespace TaskService.Models
         public string TaskName { get; set; }
         [Required]
         public string Description{ get; set; }
-        [Required]
+        
         public DateTime StartDate { get; set; }
         [Required]
         public int StartHour { get; set; }
@@ -28,7 +28,7 @@ namespace TaskService.Models
         [Required]
         public Guid CustomerGuid { get; set; }
         public Guid TaskGuid { get; set; }        
-        public List<TaskXEmployee> Employees { get; set; }
+        public Guid Employee { get; set; }
 
     }
 }

@@ -1,4 +1,4 @@
-﻿using EmployeeService.Utils;
+﻿using TaskService.Utils;
 using Microsoft.Extensions.Configuration;
 using RabbitMQ.Client;
 using System;

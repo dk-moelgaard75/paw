@@ -14,6 +14,7 @@ import { PawTaskformComponent } from './paw-taskform/paw-taskform.component';
 import { PawNoAccessComponent } from './paw-no-access/paw-no-access.component';
 import { JwtHelperService, JWT_OPTIONS } from '@auth0/angular-jwt';
 import { PawTasklistComponent } from './paw-tasklist/paw-tasklist.component';
+import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [
@@ -26,12 +27,14 @@ import { PawTasklistComponent } from './paw-tasklist/paw-tasklist.component';
     PawTaskformComponent,
     PawNoAccessComponent,
     PawTasklistComponent
+    
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     ReactiveFormsModule,
-    HttpClientModule
+    HttpClientModule,
+    NgbModule
   ],
   providers: [
     { provide: JWT_OPTIONS, useValue: JWT_OPTIONS },

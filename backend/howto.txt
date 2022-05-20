@@ -47,5 +47,8 @@ https://www.thecodehubs.com/decode-jwt-token-in-angular/
 https://codepedia.info/jwt-authentication-in-aspnet-core-web-api-token
 https://www.youtube.com/watch?v=cuRDyrcWddg
 
+//MicroServices snak:
+https://www.youtube.com/watch?v=zzMLg3Ys5vI
+
  
  

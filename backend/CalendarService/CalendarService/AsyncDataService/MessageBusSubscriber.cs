@@ -23,10 +23,13 @@ namespace CalendarService.AsyncDataService
         private IMessageBusClient _messageBusClient;
         private IEventProcessor _eventProcessor;
 
-        public MessageBusSubscriber(IConfiguration configuration, ICalendarRepository calendarRepository)
+        public MessageBusSubscriber(IConfiguration configuration, 
+                                    ICalendarRepository calendarRepository,
+                                    IEventProcessor eventProcessor)
         {
             _configuration = configuration;
             RabbitMqUtil.Initialize(_configuration);
+            _eventProcessor = eventProcessor;
         }
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
@@ -42,6 +45,7 @@ namespace CalendarService.AsyncDataService
                     PawLogger.DoLog(data);
                     List<EmployeePublishDto> list = JsonSerializer.Deserialize<List<EmployeePublishDto>>(data);
                     PawLogger.DoLog("####################################");
+                    PawLogger.DoLog("EmployeeChannel");
                     PawLogger.DoLog("Nr of Recieved objects:" + list.Count);
                     foreach (EmployeePublishDto dto in list)
                     {
@@ -59,6 +63,8 @@ namespace CalendarService.AsyncDataService
                     PawLogger.DoLog("CalendarService - MessageBusSubscribe/Task - event received:");
                     var body = ea.Body;
                     var data = Encoding.UTF8.GetString(body.ToArray());
+                    PawLogger.DoLog("####################################");
+                    PawLogger.DoLog("EmployeeChannel");
                     PawLogger.DoLog(data);
                 };
                 RabbitMqUtil.EmployeeChannelIncomming.BasicConsume(queue: RabbitMqUtil.EmployeeQueueNameIncomming, autoAck: true, consumer: consumerTaskIncomming);

@@ -8,83 +8,115 @@ namespace CalendarService.Data
 {
     public class CalendarRepository : ICalendarRepository
     {
-        public CalendarRepository()
+        private readonly CalendarDbContext _context;
+        public CalendarRepository(CalendarDbContext context)
         {
-
+            _context = context;
         }
-        public int CreateCalendar(CalendarModel calendarModel)
+        #region Calendar
+        public int CreateCalendar(CalendarModel newEntity)
         {
-            throw new NotImplementedException();
+            if (newEntity == null)
+            {
+                throw new ArgumentNullException(nameof(newEntity));
+            }
+            _context.Calendar.Add(newEntity);
+            _context.SaveChanges();
+            return newEntity.Id;
         }
-
-        public int CreateCalendarEmployee(CalendarEmployeeModel calendarEmployeeModel)
-        {
-            throw new NotImplementedException();
-        }
-
-        public int CreateCalendarTaskObj(CalendarTaskObjModel calendarTaskObjModel)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void DeleteCalendar(CalendarModel calendarEmployeeModel)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void DeleteCalendarEmployee(CalendarEmployeeModel calendarEmployeeModel)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void DeleteTaskObjCalendar(CalendarTaskObjModel calendarEmployeeModel)
-        {
-            throw new NotImplementedException();
-        }
-
         public IEnumerable<CalendarModel> GetAllCalendar()
         {
-            throw new NotImplementedException();
-        }
-
-        public IEnumerable<CalendarEmployeeModel> GetAllCalendarEmployee()
-        {
-            throw new NotImplementedException();
-        }
-
-        public IEnumerable<CalendarTaskObjModel> GetAllTaskObjCalendar()
-        {
-            throw new NotImplementedException();
+            return _context.Calendar.ToList();
         }
 
         public CalendarModel GetCalendarByCalendarGuid(Guid id)
         {
-            throw new NotImplementedException();
+            return _context.Calendar.FirstOrDefault(p => p.CalenderGuid == id);
         }
 
+        public void UpdateCalendar(CalendarModel modifiedEntity)
+        {
+            _context.Calendar.Update(modifiedEntity);
+            _context.SaveChanges();
+        }
+
+        public void DeleteCalendar(CalendarModel entityToDelete)
+        {
+            _context.Calendar.Remove(entityToDelete);
+            _context.SaveChanges();
+        }
+        #endregion
+
+        #region CalendarEmployee
+        public int CreateCalendarEmployee(CalendarEmployeeModel newEntity)
+        {
+            if (newEntity == null)
+            {
+                throw new ArgumentNullException(nameof(newEntity));
+            }
+            _context.CalendarEmployee.Add(newEntity);
+            _context.SaveChanges();
+            return newEntity.Id;
+
+        }
+        public IEnumerable<CalendarEmployeeModel> GetAllCalendarEmployee()
+        {
+            return _context.CalendarEmployee.ToList();
+        }
+        
         public CalendarEmployeeModel GetCalendarEmployeeByCalendarGuid(Guid id)
         {
-            throw new NotImplementedException();
+            return _context.CalendarEmployee.FirstOrDefault(p => p.CalenderGuid == id);
         }
 
-        public CalendarModel GetCalendarTaskObjByCalendarGuid(Guid id)
+        public void UpdateCalendarEmployee(CalendarEmployeeModel modifiedEntity)
         {
-            throw new NotImplementedException();
+            _context.CalendarEmployee.Remove(modifiedEntity);
+            _context.SaveChanges();
         }
 
-        public void UpdateCalendar(CalendarModel calendarEmployeeModel)
+        public void DeleteCalendarEmployee(CalendarEmployeeModel entityToDelete)
         {
-            throw new NotImplementedException();
+            _context.CalendarEmployee.Remove(entityToDelete);
+            _context.SaveChanges();
+        }
+        #endregion
+
+
+
+        #region CalendarTaskObj
+        public int CreateCalendarTaskObj(CalendarTaskObjModel newEntity)
+        {
+            if (newEntity == null)
+            {
+                throw new ArgumentNullException(nameof(newEntity));
+            }
+            _context.CalendarTaskObj.Add(newEntity);
+            _context.SaveChanges();
+            return newEntity.Id;
+
+        }
+        public IEnumerable<CalendarTaskObjModel> GetAllTaskObjCalendar()
+        {
+            return _context.CalendarTaskObj.ToList();
+        }
+        public CalendarTaskObjModel GetCalendarTaskObjByCalendarGuid(Guid id)
+        {
+            return _context.CalendarTaskObj.First(p => p.CalenderGuid == id);
         }
 
-        public void UpdateCalendarEmployee(CalendarEmployeeModel calendarEmployeeModel)
+        public void UpdateTaskObjCalendar(CalendarTaskObjModel modifiedEntity)
         {
-            throw new NotImplementedException();
+            _context.CalendarTaskObj.Update(modifiedEntity);
+            _context.SaveChanges();
         }
 
-        public void UpdateTaskObjCalendar(CalendarTaskObjModel calendarEmployeeModel)
+        public void DeleteTaskObjCalendar(CalendarTaskObjModel entityToDelete)
         {
-            throw new NotImplementedException();
+            _context.CalendarTaskObj.Remove(entityToDelete);
+            _context.SaveChanges();
         }
+
+        #endregion
     }
 }

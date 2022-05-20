@@ -25,7 +25,7 @@ namespace CalendarService.Data
 		//CalendarTaskObj entities
 		int CreateCalendarTaskObj(CalendarTaskObjModel calendarTaskObjModel);
 		IEnumerable<CalendarTaskObjModel> GetAllTaskObjCalendar();
-		CalendarModel GetCalendarTaskObjByCalendarGuid(Guid id);
+		CalendarTaskObjModel GetCalendarTaskObjByCalendarGuid(Guid id);
 		void UpdateTaskObjCalendar(CalendarTaskObjModel calendarEmployeeModel);
 		void DeleteTaskObjCalendar(CalendarTaskObjModel calendarEmployeeModel);
 	}

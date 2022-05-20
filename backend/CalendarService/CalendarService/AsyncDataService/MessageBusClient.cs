@@ -79,7 +79,7 @@ namespace CalendarService.AsyncDataService
             throw new NotImplementedException();
         }
 
-        public void RequestTask(DateTime startDate, string calendarGuid)
+        public void RequestTasks(DateTime startDate, string calendarGuid)
         {
             TaskObjGetDto taskGetDto = new TaskObjGetDto() { StartDate = startDate, CalendarGuid = calendarGuid };
             var message = JsonSerializer.Serialize(taskGetDto);

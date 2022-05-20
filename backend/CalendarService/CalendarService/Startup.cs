@@ -33,9 +33,9 @@ namespace CalendarService
         {
             PawLogger.DoLog("Calendar service start:" + DateTime.Now);
             //RabbitMQ
+            
             services.AddSingleton<IMessageBusClient, MessageBusClient>();
             services.AddSingleton<IEventProcessor, EventProcessor>();
-
             services.AddControllers();
             services.AddHostedService<MessageBusSubscriber>();
             services.AddSwaggerGen(c =>
@@ -54,8 +54,10 @@ namespace CalendarService
             {
                 services.AddDbContext<CalendarDbContext>(opt => opt.UseNpgsql(Configuration.GetConnectionString("DbConnection")));
             }
-            services.AddSingleton<ICalendarRepository, CalendarRepository>();
+
+            services.AddScoped<ICalendarRepository, CalendarRepository>();
             //services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            
             services.AddCors(options =>
             {
                 options.AddDefaultPolicy(

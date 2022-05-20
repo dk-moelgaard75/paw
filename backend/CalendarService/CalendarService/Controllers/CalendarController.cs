@@ -21,8 +21,8 @@ namespace CalendarService.Controllers
             _messageBusClient = msgBusClient;
             _eventProcessor = processor;
         }
-        [HttpGet("{string:id}", Name="GetCalendar")]
-        public IActionResult GetCalendar(string guid)
+        [HttpGet("{string:id}", Name="GetCalendarWithId")]
+        public IActionResult GetCalendarWithId(string guid)
         {
             string html = _eventProcessor.GetCalendarHtml(guid);
             if (html == null)
@@ -33,11 +33,12 @@ namespace CalendarService.Controllers
             return Ok(html);
         }
         [HttpPost]
-        public IActionResult Post([FromBody] TaskObjGetDto dto)
+        public IActionResult Post([FromBody] DateTime startDate)
         {
-            _messageBusClient.RequestEmployees(dto.CalendarGuid);
-            _messageBusClient.RequestTask(dto.StartDate, dto.CalendarGuid);
-            return Ok();
+            Guid guid = Guid.NewGuid();
+            _messageBusClient.RequestEmployees(guid.ToString());
+            _messageBusClient.RequestTasks(startDate, guid.ToString());
+            return Ok(guid.ToString());
         }
     }
 }

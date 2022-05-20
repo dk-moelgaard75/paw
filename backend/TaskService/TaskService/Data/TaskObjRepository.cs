@@ -25,15 +25,21 @@ namespace TaskService.Data
             return newEntity.Id;
         }
 
+
         public void Delete(TaskObject entityToDelete)
         {
             _context.TaskObjs.Remove(entityToDelete);
             _context.SaveChanges();
         }
 
+
         public IEnumerable<TaskObject> GetAll()
         {
             return _context.TaskObjs.ToList();
+        }
+        public IEnumerable<TaskObject> GetByStartDate(DateTime startDate)
+        {
+            return _context.TaskObjs.Where(p => p.StartDate.CompareTo(startDate) == 0);
         }
 
         public IEnumerable<TaskXEmployee> GetAllEmployees(Guid taskGuid)
@@ -42,9 +48,13 @@ namespace TaskService.Data
             
         }
 
-        public TaskObject GetByGuid(Guid customerGuid)
+        public TaskObject GetByCustomerGuid(Guid customerGuid)
         {
             return _context.TaskObjs.FirstOrDefault(p => p.CustomerGuid.Equals(customerGuid));
+        }
+        public TaskObject GetByTaskGuid(Guid customerGuid)
+        {
+            return _context.TaskObjs.FirstOrDefault(p => p.TaskGuid.Equals(customerGuid));
         }
 
         public TaskObject GetById(int id)
@@ -52,10 +62,42 @@ namespace TaskService.Data
             return _context.TaskObjs.FirstOrDefault(p => p.Id == id);
         }
 
+
         public void Update(TaskObject modifiedEntity)
         {
             _context.TaskObjs.Update(modifiedEntity);
             _context.SaveChanges();
         }
+
+
+        public int CreateEmployee(TaskXEmployee newEntity)
+        {
+            if (newEntity == null)
+            {
+                throw new ArgumentNullException(nameof(newEntity));
+            }
+            _context.TaskXEmployee.Add(newEntity);
+            _context.SaveChanges();
+
+            return newEntity.Id;
+        }
+
+        public TaskXEmployee GetEmployeeByGuid(Guid empGuid)
+        {
+            return _context.TaskXEmployee.FirstOrDefault(p => p.EmployeeGuid.Equals(empGuid));
+        }
+
+        public void UpdateEmployee(TaskXEmployee modifiedEntity)
+        {
+            _context.TaskXEmployee.Update(modifiedEntity);
+            _context.SaveChanges();
+
+        }
+        public void DeleteEmployee(TaskXEmployee entityToDelete)
+        {
+            _context.TaskXEmployee.Remove(entityToDelete);
+            _context.SaveChanges();
+        }
+
     }
 }

@@ -66,7 +66,7 @@ namespace EmployeeService.EventProcessing
                 foreach (Employee emp in employees)
                 {
                     EmployeePublishedDto dto = _mapper.Map<EmployeePublishedDto>(emp);
-                    dto.CalendarGuid = Guid.Parse(notifcationMessage.CalendarGuid;
+                    dto.CalendarGuid = Guid.Parse(notifcationMessage.CalendarGuid);
                     list.Add(dto);
                 }
             }

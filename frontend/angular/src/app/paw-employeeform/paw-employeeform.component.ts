@@ -98,7 +98,6 @@ export class PawEmployeeComponent implements OnInit {
 
   getStatusLabel() {
     return this.serviceStatus;
-
   }
   get inEditMode() {
     return this._inEditMode; 
@@ -110,13 +109,12 @@ export class PawEmployeeComponent implements OnInit {
 
   getEmployees() {
     this.employeeService.getEmployees().subscribe((response: HttpResponse<IEmployee[]>) => {
-      console.log("getEmployees")
       this.employees = response.body as IEmployee[];
     });
   }
   getEmployeesWithHeaders() {
-    this.employeeService.getEmployeesWithHeader().subscribe((response: HttpResponse<IEmployee[]>) => {
-      console.log("header",response)
+    this.employeeService.getEmployees().subscribe((response: HttpResponse<IEmployee[]>) => {
+      console.log("body",response.body)
       this.employees = response.body as IEmployee[];
       
       this.httpHeaders = response.headers;
