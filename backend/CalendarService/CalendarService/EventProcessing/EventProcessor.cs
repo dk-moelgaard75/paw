@@ -136,11 +136,10 @@ namespace CalendarService.EventProcessing
             StringBuilder sb = new StringBuilder();
             sb.Append("	<tr>");
             sb.Append("		<th>medarbejder</th>");
-            sb.Append("		<th colspan='8'>17/5-2022</th>");
-            sb.Append("		<th colspan='8'>18/5-2022</th>");
-            sb.Append("		<th colspan='8'>18/5-2022</th>");
-            sb.Append("		<th colspan='8' > 18/5-2022</th>");
-            sb.Append("		<th colspan='8'>18/5-2022</th>");
+            for (int i = 0; i < nrOfDays; i++)
+            {
+                sb.Append("		<th colspan='8'>" + startDate.AddDays(i).ToString("dd-MM-yyyy") + "</th>");
+            }            
             sb.Append("	</tr>");
 
             return sb.ToString();
