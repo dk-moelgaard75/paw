@@ -18,6 +18,6 @@ namespace CalendarService.Models
 
         public int EmployeeDone { get; set; }
 
-        public Guid TaskDone { get; set; }
+        public int TaskDone { get; set; }
     }
 }

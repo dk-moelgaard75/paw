@@ -26,8 +26,14 @@ namespace CalendarService.Migrations
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
+                    b.Property<Guid>("CalendarGuid")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid>("CalenderGuid")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("text");
 
                     b.Property<Guid>("EmployeeGuid")
                         .HasColumnType("uuid");
@@ -56,8 +62,8 @@ namespace CalendarService.Migrations
                     b.Property<int>("EmployeeDone")
                         .HasColumnType("integer");
 
-                    b.Property<Guid>("TaskDone")
-                        .HasColumnType("uuid");
+                    b.Property<int>("TaskDone")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -71,20 +77,26 @@ namespace CalendarService.Migrations
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<Guid>("CalenderGuid")
+                    b.Property<Guid>("CalendarGuid")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("Employee")
                         .HasColumnType("uuid");
 
                     b.Property<int>("EstimatedHours")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("StartDatetime")
+                    b.Property<DateTime>("StartDate")
                         .HasColumnType("timestamp without time zone");
 
-                    b.Property<int>("StartHour")
+                    b.Property<int>("StartTime")
                         .HasColumnType("integer");
 
                     b.Property<Guid>("TaskGuid")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("TaskName")
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 

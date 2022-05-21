@@ -13,12 +13,23 @@ namespace CalendarService.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         [Required]
-        public Guid CalenderGuid { get; set; }
-
         public Guid TaskGuid { get; set; }
-        public DateTime StartDatetime { get; set; }
-
-        public int StartHour { get; set; }
+        public Guid CalendarGuid { get; set; }
+        public string TaskName { get; set; }
+        public DateTime StartDate { get; set; }
+        public int StartTime { get; set; }
         public int EstimatedHours { get; set; }
+        public Guid Employee { get; set; }
+
+        /*
+        //DTO - for comparison 
+        public Guid TaskGuid { get; set; }
+        public string TaskName { get; set; }
+        public DateTime StartDate { get; set; }
+        public int StartTime { get; set; }
+        public int EstimatedHours { get; set; }
+        public Guid CalendarGuid { get; set; }
+        public Guid Employee { get; set; }
+        */
     }
 }

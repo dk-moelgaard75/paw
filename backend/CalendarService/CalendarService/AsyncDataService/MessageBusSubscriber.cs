@@ -16,6 +16,7 @@ using CalendarService.Data;
 using CalendarService.EventProcessing;
 using Microsoft.Extensions.DependencyInjection;
 using AutoMapper;
+using CalendarService.Models;
 
 namespace CalendarService.AsyncDataService
 {
@@ -53,19 +54,19 @@ namespace CalendarService.AsyncDataService
                     var body = ea.Body;
                     var data = Encoding.UTF8.GetString(body.ToArray());
                     PawLogger.DoLog(data);
-                    List<EmployeePublishDto> list = JsonSerializer.Deserialize<List<EmployeePublishDto>>(data);
+                    List<EmployeePublishDto> messages = JsonSerializer.Deserialize<List<EmployeePublishDto>>(data);
                     PawLogger.DoLog("####################################");
                     PawLogger.DoLog("EmployeeChannel");
-                    PawLogger.DoLog("Nr of Recieved objects:" + list.Count);
-                    foreach (EmployeePublishDto dto in list)
+                    PawLogger.DoLog("Nr of Recieved objects:" + messages.Count);
+                    foreach (EmployeePublishDto dto in messages)
                     {
                         PawLogger.DoLog(dto.FirstName);
                         PawLogger.DoLog(dto.LastName);
                         PawLogger.DoLog(dto.Email);
                         PawLogger.DoLog(dto.CalendarGuid.ToString());
-
                     }
-                    EmployeePublishDto message = JsonSerializer.Deserialize<EmployeePublishDto>(data);
+
+                    WriteEmployeesToDb(messages);
                 };
                 RabbitMqUtil.EmployeeChannelIncomming.BasicConsume(queue: RabbitMqUtil.EmployeeQueueNameIncomming, autoAck: true, consumer: consumerEmployeeIncomming);
 
@@ -75,11 +76,11 @@ namespace CalendarService.AsyncDataService
                     PawLogger.DoLog("CalendarService - MessageBusSubscribe/Task - event received:");
                     var body = ea.Body;
                     var data = Encoding.UTF8.GetString(body.ToArray());
+                    List<TaskObjPublishDto> messages = JsonSerializer.Deserialize<List<TaskObjPublishDto>>(data);
                     PawLogger.DoLog("####################################");
-                    PawLogger.DoLog("EmployeeChannel");
-                    PawLogger.DoLog(data);
-                    List<TaskObjPublishDto> message = JsonSerializer.Deserialize<List<TaskObjPublishDto>>(data);
-                    foreach(TaskObjPublishDto dto in message)
+                    PawLogger.DoLog("TaskChannel");
+                    PawLogger.DoLog("Nr of Recieved objects:" + messages.Count);
+                    foreach(TaskObjPublishDto dto in messages)
                     {
                         PawLogger.DoLog(dto.CalendarGuid.ToString());
                         PawLogger.DoLog(dto.TaskGuid.ToString());
@@ -87,6 +88,7 @@ namespace CalendarService.AsyncDataService
                         PawLogger.DoLog(dto.Employee.ToString());
 
                     }
+                    WriteTasksToDb(messages);
                 };
                 RabbitMqUtil.TaskChannelIncomming.BasicConsume(queue: RabbitMqUtil.TaskQueueNameIncomming, autoAck: true, consumer: consumerTaskIncomming);
             }
@@ -97,12 +99,52 @@ namespace CalendarService.AsyncDataService
             return Task.CompletedTask;
         }
 
-        private void SetTasks(TaskObjPublishDto dto)
+        private void WriteTasksToDb(List<TaskObjPublishDto> dtos)
         {
+            Guid calenderGuid = Guid.Empty;
             using (var scope = _scopeFactory.CreateScope())
             {
                 var repo = scope.ServiceProvider.GetRequiredService<ICalendarRepository>();
-                
+                foreach(TaskObjPublishDto dto in dtos)
+                {
+                    if (calenderGuid == Guid.Empty)
+                    {
+                        calenderGuid = dto.CalendarGuid;
+                    }
+                    CalendarTaskObjModel model = _mapper.Map<CalendarTaskObjModel>(dto);
+                    repo.CreateCalendarTaskObj(model);
+                }
+                CalendarModel calendarModel = repo.GetCalendarByCalendarGuid(calenderGuid);
+                if (calendarModel != null)
+                {
+                    calendarModel.TaskDone = 1;
+                    repo.UpdateCalendar(calendarModel);
+                }
+
+            }
+        }
+        private void WriteEmployeesToDb(List<EmployeePublishDto> dtos)
+        {
+            Guid calenderGuid = Guid.Empty;
+            using (var scope = _scopeFactory.CreateScope())
+            {
+                var repo = scope.ServiceProvider.GetRequiredService<ICalendarRepository>();
+                foreach (EmployeePublishDto dto in dtos)
+                {
+                    if (calenderGuid == Guid.Empty)
+                    {
+                        calenderGuid = dto.CalendarGuid;
+                    }
+                    CalendarEmployeeModel model = _mapper.Map<CalendarEmployeeModel>(dto);
+                    repo.CreateCalendarEmployee(model);
+                }
+
+                CalendarModel calendarModel = repo.GetCalendarByCalendarGuid(calenderGuid);
+                if (calendarModel != null)
+                {
+                    calendarModel.EmployeeDone = 1;
+                    repo.UpdateCalendar(calendarModel);
+                }
             }
         }
 

@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace CalendarService.Migrations
 {
-    public partial class initialcreate : Migration
+    public partial class initialMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -16,7 +16,7 @@ namespace CalendarService.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     CalenderGuid = table.Column<Guid>(type: "uuid", nullable: false),
                     EmployeeDone = table.Column<int>(type: "integer", nullable: false),
-                    TaskDone = table.Column<Guid>(type: "uuid", nullable: false)
+                    TaskDone = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -29,10 +29,12 @@ namespace CalendarService.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    CalenderGuid = table.Column<Guid>(type: "uuid", nullable: false),
+                    CalendarGuid = table.Column<Guid>(type: "uuid", nullable: false),
                     EmployeeGuid = table.Column<Guid>(type: "uuid", nullable: false),
                     FirstName = table.Column<string>(type: "text", nullable: true),
-                    LastName = table.Column<string>(type: "text", nullable: true)
+                    LastName = table.Column<string>(type: "text", nullable: true),
+                    Email = table.Column<string>(type: "text", nullable: true),
+                    CalenderGuid = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -45,11 +47,13 @@ namespace CalendarService.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    CalenderGuid = table.Column<Guid>(type: "uuid", nullable: false),
                     TaskGuid = table.Column<Guid>(type: "uuid", nullable: false),
-                    StartDatetime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    StartHour = table.Column<int>(type: "integer", nullable: false),
-                    EstimatedHours = table.Column<int>(type: "integer", nullable: false)
+                    CalendarGuid = table.Column<Guid>(type: "uuid", nullable: false),
+                    TaskName = table.Column<string>(type: "text", nullable: true),
+                    StartDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    StartTime = table.Column<int>(type: "integer", nullable: false),
+                    EstimatedHours = table.Column<int>(type: "integer", nullable: false),
+                    Employee = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {

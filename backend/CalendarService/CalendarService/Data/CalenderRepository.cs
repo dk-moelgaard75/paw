@@ -102,7 +102,7 @@ namespace CalendarService.Data
         }
         public CalendarTaskObjModel GetCalendarTaskObjByCalendarGuid(Guid id)
         {
-            return _context.CalendarTaskObj.First(p => p.CalenderGuid == id);
+            return _context.CalendarTaskObj.First(p => p.CalendarGuid == id);
         }
 
         public void UpdateTaskObjCalendar(CalendarTaskObjModel modifiedEntity)
