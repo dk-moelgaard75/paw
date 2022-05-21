@@ -14,6 +14,8 @@ using System.Text.Json;
 using CalendarService.DTOs;
 using CalendarService.Data;
 using CalendarService.EventProcessing;
+using Microsoft.Extensions.DependencyInjection;
+using AutoMapper;
 
 namespace CalendarService.AsyncDataService
 {
@@ -21,21 +23,29 @@ namespace CalendarService.AsyncDataService
     {
         private IConfiguration _configuration;
         private IMessageBusClient _messageBusClient;
-        private IEventProcessor _eventProcessor;
+        private readonly IServiceScopeFactory _scopeFactory;
+        private readonly IMapper _mapper;
 
-        public MessageBusSubscriber(IConfiguration configuration, 
-                                    ICalendarRepository calendarRepository,
-                                    IEventProcessor eventProcessor)
+
+        public MessageBusSubscriber(IConfiguration configuration,
+                                   IMessageBusClient msgBusClient,
+                                    IServiceScopeFactory scopeFactory,
+                                    IMapper mapper)
         {
             _configuration = configuration;
             RabbitMqUtil.Initialize(_configuration);
-            _eventProcessor = eventProcessor;
+            _messageBusClient = msgBusClient;
+            _scopeFactory = scopeFactory;
+            _mapper = mapper;
+            PawLogger.DoLog("MessageBusSubscriber - calenderservice - init");
+
         }
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
             stoppingToken.ThrowIfCancellationRequested();
             if (RabbitMqUtil.IsInitialized)
             {
+                PawLogger.DoLog("MessageBusSubscriber - calenderservice - ExecuteAsync activated");
                 var consumerEmployeeIncomming = new EventingBasicConsumer(RabbitMqUtil.EmployeeChannelIncomming);
                 consumerEmployeeIncomming.Received += (ModuleHandle, ea) =>
                 {
@@ -53,7 +63,9 @@ namespace CalendarService.AsyncDataService
                         PawLogger.DoLog(dto.LastName);
                         PawLogger.DoLog(dto.Email);
                         PawLogger.DoLog(dto.CalendarGuid.ToString());
+
                     }
+                    EmployeePublishDto message = JsonSerializer.Deserialize<EmployeePublishDto>(data);
                 };
                 RabbitMqUtil.EmployeeChannelIncomming.BasicConsume(queue: RabbitMqUtil.EmployeeQueueNameIncomming, autoAck: true, consumer: consumerEmployeeIncomming);
 
@@ -66,8 +78,17 @@ namespace CalendarService.AsyncDataService
                     PawLogger.DoLog("####################################");
                     PawLogger.DoLog("EmployeeChannel");
                     PawLogger.DoLog(data);
+                    List<TaskObjPublishDto> message = JsonSerializer.Deserialize<List<TaskObjPublishDto>>(data);
+                    foreach(TaskObjPublishDto dto in message)
+                    {
+                        PawLogger.DoLog(dto.CalendarGuid.ToString());
+                        PawLogger.DoLog(dto.TaskGuid.ToString());
+                        PawLogger.DoLog(dto.TaskName.ToString());
+                        PawLogger.DoLog(dto.Employee.ToString());
+
+                    }
                 };
-                RabbitMqUtil.EmployeeChannelIncomming.BasicConsume(queue: RabbitMqUtil.EmployeeQueueNameIncomming, autoAck: true, consumer: consumerTaskIncomming);
+                RabbitMqUtil.TaskChannelIncomming.BasicConsume(queue: RabbitMqUtil.TaskQueueNameIncomming, autoAck: true, consumer: consumerTaskIncomming);
             }
             else
             {
@@ -75,6 +96,18 @@ namespace CalendarService.AsyncDataService
             }
             return Task.CompletedTask;
         }
+
+        private void SetTasks(TaskObjPublishDto dto)
+        {
+            using (var scope = _scopeFactory.CreateScope())
+            {
+                var repo = scope.ServiceProvider.GetRequiredService<ICalendarRepository>();
+                
+            }
+        }
+
+
+
         public override void Dispose()
         {
             bool closeConnection = false;

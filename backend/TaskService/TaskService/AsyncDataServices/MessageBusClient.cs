@@ -89,10 +89,14 @@ namespace TaskService.AsyncDataServices
         private void SendMessage(string message)
         {
             var messageBody = Encoding.UTF8.GetBytes(message);
-            _channel.BasicPublish(exchange: RabbitMQEchangeString,
-                                    routingKey: "",
-                                    basicProperties: null,
-                                    body: messageBody);
+            PawLogger.DoLog("RabbitMQExchange:" + _configuration["RabbitMQExchange"]);
+            PawLogger.DoLog("RabbitMQRoutingKeyCalendarOutgoing:" + _configuration["RabbitMQRoutingKeyCalendarOutgoing"]);
+
+            RabbitMqUtil.CalenderChannelOutgoing.BasicPublish(exchange: _configuration["RabbitMQExchange"],
+                                                              routingKey: _configuration["RabbitMQRoutingKeyCalendarOutgoing"],
+                                                                basicProperties: null,
+                                                                body: messageBody);
+
             PawLogger.DoLog($"Taskservice - message sent thru RabbitMQ");
         }
         public void Dispose()

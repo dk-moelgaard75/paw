@@ -36,7 +36,7 @@ namespace TaskService
             services.AddSingleton<IMessageBusClient, MessageBusClient>();
             
             services.AddControllers();
-            
+            services.AddHostedService<MessageBusSubscriber>();
             /*
             services.AddSwaggerGen(c =>
             {

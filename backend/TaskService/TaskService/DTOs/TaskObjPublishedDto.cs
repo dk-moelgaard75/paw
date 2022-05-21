@@ -15,5 +15,7 @@ namespace TaskService.DTOs
         public int EstimatedHours { get; set; }
         
         public Guid CalendarGuid { get; set; }
+        
+        public Guid Employee { get; set; }
     }
 }

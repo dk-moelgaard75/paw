@@ -32,16 +32,6 @@ namespace CalendarService
         public void ConfigureServices(IServiceCollection services)
         {
             PawLogger.DoLog("Calendar service start:" + DateTime.Now);
-            //RabbitMQ
-            
-            services.AddSingleton<IMessageBusClient, MessageBusClient>();
-            services.AddSingleton<IEventProcessor, EventProcessor>();
-            services.AddControllers();
-            services.AddHostedService<MessageBusSubscriber>();
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "CalendarService", Version = "v1" });
-            });
 
             string con = Configuration["Data:CommandApiConnectionPod:ConnectionString"];
             Console.WriteLine($"Employee service starting with connectionstring: {con}");
@@ -54,9 +44,25 @@ namespace CalendarService
             {
                 services.AddDbContext<CalendarDbContext>(opt => opt.UseNpgsql(Configuration.GetConnectionString("DbConnection")));
             }
-
             services.AddScoped<ICalendarRepository, CalendarRepository>();
-            //services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+            //RabbitMQ
+            services.AddSingleton<IMessageBusClient, MessageBusClient>();
+            services.AddControllers();
+            services.AddHostedService<MessageBusSubscriber>();
+
+            services.AddSingleton<IEventProcessor, EventProcessor>();
+
+
+            services.AddHostedService<MessageBusSubscriber>();
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "CalendarService", Version = "v1" });
+            });
+
+
+
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             
             services.AddCors(options =>
             {

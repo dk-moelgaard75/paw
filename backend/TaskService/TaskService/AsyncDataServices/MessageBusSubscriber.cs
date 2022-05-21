@@ -13,6 +13,9 @@ using System.Text.Json;
 using TaskService.DTOs;
 using TaskService.EventProcessing;
 using TaskService.AsyncDataServices;
+using Microsoft.Extensions.DependencyInjection;
+using TaskService.Data;
+using AutoMapper;
 
 namespace TaskService.AsyncDataServices
 {
@@ -20,16 +23,21 @@ namespace TaskService.AsyncDataServices
     {
         private IConfiguration _configuration;
         private IMessageBusClient _messageBusClient;
-        private IEventProcessor _eventProcessor;
+        private readonly IServiceScopeFactory _scopeFactory;
+        private readonly IMapper _mapper;
+
 
         public MessageBusSubscriber(IConfiguration configuration, 
-                                    IMessageBusClient msgBusClient,
-                                    IEventProcessor eventProcessor)
+                                    IMessageBusClient msgBusClient, 
+                                    IServiceScopeFactory scopeFactory,
+                                    IMapper mapper)
         {
             _configuration = configuration;
             _messageBusClient = msgBusClient;
-            _eventProcessor = eventProcessor;
             RabbitMqUtil.Initialize(_configuration);
+            _scopeFactory = scopeFactory;
+            _mapper = mapper;
+
         }
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
@@ -46,7 +54,7 @@ namespace TaskService.AsyncDataServices
                     CalenderRequestDto message = JsonSerializer.Deserialize<CalenderRequestDto>(data);
                     PawLogger.DoLog("Message - StartDate: " + message.StartDate);
                     PawLogger.DoLog("Message - CalendarGuid: " + message.CalendarGuid);
-                    _messageBusClient.PublishNewTask(_eventProcessor.GetTasks(message));
+                    _messageBusClient.PublishNewTask(GetTasks(message));
                 };
                 RabbitMqUtil.CalenderChannelIncomming.BasicConsume(queue: RabbitMqUtil.CalenderQueueNameIncomming, autoAck: true, consumer: consumer);
             }
@@ -54,7 +62,22 @@ namespace TaskService.AsyncDataServices
             return Task.CompletedTask;
         }
 
-        
+        private List<TaskObjPublishedDto> GetTasks(CalenderRequestDto dto)
+        {
+            List<TaskObjPublishedDto> newList = null;
+            using (var scope = _scopeFactory.CreateScope())
+            {
+                var repo = scope.ServiceProvider.GetRequiredService<ITaskObjRepository>();
+                IEnumerable<TaskObjPublishedDto> list = _mapper.Map<IEnumerable<TaskObjPublishedDto>>(repo.GetByStartDate(dto.StartDate));
+                newList = list.ToList();
+                foreach (TaskObjPublishedDto obj in newList)
+                {
+                    obj.CalendarGuid = Guid.Parse(dto.CalendarGuid);
+                }
+            }
+            return newList;
+        }
+
         /*
         private void InitializeRabbitMQ()
         {

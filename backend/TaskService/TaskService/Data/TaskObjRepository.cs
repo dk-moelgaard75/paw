@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Configuration;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,9 +10,11 @@ namespace TaskService.Data
     public class TaskObjRepository : ITaskObjRepository
     {
         private readonly TaskObjDbContext _context;
-        public TaskObjRepository(TaskObjDbContext context)
+        private readonly IConfiguration _configuration;
+        public TaskObjRepository(TaskObjDbContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
         public int Create(TaskObject newEntity)
         {
@@ -39,7 +42,14 @@ namespace TaskService.Data
         }
         public IEnumerable<TaskObject> GetByStartDate(DateTime startDate)
         {
-            return _context.TaskObjs.Where(p => p.StartDate.CompareTo(startDate) == 0);
+            string confDays = _configuration["CalenderSearchNrOfDays"];
+            double addDays = 0;
+            if (!Double.TryParse(confDays, out addDays))
+            {
+                addDays = 7;
+            }
+            DateTime endDate = startDate.AddDays(addDays);
+            return _context.TaskObjs.Where(p => p.StartDate >= startDate.Date && p.StartDate <= endDate.Date);
         }
 
         public IEnumerable<TaskXEmployee> GetAllEmployees(Guid taskGuid)

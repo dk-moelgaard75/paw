@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using CalendarService.AsyncDataService;
 using CalendarService.EventProcessing;
 using CalendarService.DTOs;
+using System.Globalization;
 
 namespace CalendarService.Controllers
 {
@@ -21,7 +22,7 @@ namespace CalendarService.Controllers
             _messageBusClient = msgBusClient;
             _eventProcessor = processor;
         }
-        [HttpGet("{string:id}", Name="GetCalendarWithId")]
+        [HttpGet("{string:guid}", Name="GetCalendarWithId")]
         public IActionResult GetCalendarWithId(string guid)
         {
             string html = _eventProcessor.GetCalendarHtml(guid);
@@ -33,11 +34,12 @@ namespace CalendarService.Controllers
             return Ok(html);
         }
         [HttpPost]
-        public IActionResult Post([FromBody] DateTime startDate)
+        public IActionResult Post([FromBody] object startDate)
         {
             Guid guid = Guid.NewGuid();
-            _messageBusClient.RequestEmployees(guid.ToString());
-            _messageBusClient.RequestTasks(startDate, guid.ToString());
+            DateTime dt = DateTime.ParseExact(startDate.ToString(), "yyyy-MM-dd", CultureInfo.InvariantCulture);
+            //_messageBusClient.RequestEmployees(guid.ToString());
+            _messageBusClient.RequestTasks(dt, guid.ToString());
             return Ok(guid.ToString());
         }
     }
