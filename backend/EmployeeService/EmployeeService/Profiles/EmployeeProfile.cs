@@ -23,7 +23,9 @@ namespace EmployeeService.Profiles
             CreateMap<EmployeeCreateDto, Employee>();
             //CreateMap<EmployeeCreateDto, Employee>();
 
-            CreateMap<Employee, EmployeePublishedDto>();
+            //Map employee and handle UID af EmployeGuid in the process
+            CreateMap<Employee, EmployeePublishedDto>()
+                .ForMember(dest => dest.EmployeeGuid, opt => opt.MapFrom(src => src.UID));
         }   
     }
 }

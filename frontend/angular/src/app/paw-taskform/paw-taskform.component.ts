@@ -1,3 +1,4 @@
+import { CalendarService } from './../services/calendar.service';
 import { ITaskObj } from './../shared/ITaskObj';
 import { IStartTime } from './../shared/IStartTime';
 import { EmployeeService } from './../services/employee.service';
@@ -10,6 +11,8 @@ import { TaskobjService } from '../services/taskobj.service';
 import { NgbDate, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgbDatepicker } from '@ng-bootstrap/ng-bootstrap';
 import { HttpClient, HttpParams, HttpHeaders,HttpResponse,HttpEvent, HttpEventType } from '@angular/common/http';
+import { async } from 'rxjs/internal/scheduler/async';
+
 
 @Component({
   selector: 'app-paw-taskform',
@@ -26,10 +29,16 @@ export class PawTaskformComponent implements OnInit {
     taskcustomer: new FormControl('', Validators.required),
     taskemployee: new FormControl('', Validators.required)
   });
+
   private _inEditMode : boolean = false;
+  private curCalendarId : string = '';
+  public loading: boolean = false;
   public tasks: ITaskObj[] = [];
+  
+  public calendarHtml: string = '';
   private serviceStatus: string = "N/A";
   private taskService: TaskobjService;
+  private calenderService: CalendarService;
   private customerService: CustomerService;
   private employeeService: EmployeeService;
   public customers: ICustomer[] = [];
@@ -51,10 +60,12 @@ export class PawTaskformComponent implements OnInit {
   constructor(tskService: TaskobjService, 
             custService: CustomerService,
             emplService: EmployeeService,
+            calService: CalendarService,
             private changeDetection: ChangeDetectorRef) { 
     this.taskService = tskService;
     this.customerService = custService;
     this.employeeService = emplService;
+    this.calenderService = calService;
   }
 
   ngOnInit(): void {
@@ -184,4 +195,54 @@ export class PawTaskformComponent implements OnInit {
     } 
     */
   }
+  handleCalendar() {
+      let curDate = this.currentTaskstartdate();
+      if (curDate !== 'undefined-undefined-undefined')
+      {
+        this.getCalenderId(curDate);
+      }
+      else{
+        window.alert("Vælg en dato først");
+      }
+  }
+  
+  
+
+  getCalenderId(startDate: string)  {
+    this.loading = true;
+    console.log("getCalenderId kaldt"); 
+    this.calenderService.getCalendarId(startDate).subscribe(response => {
+      if (response != null && response.ok)
+      {
+        console.log("getCalenderId - response:",response);
+        console.log("getCalenderId - response body:",response.body);
+        this.curCalendarId = response.body;
+        console.log("getCalenderId - OK:",response.ok);
+        this.createCalendar(this.curCalendarId,this.currentTaskstartdate());  
+      }
+      else {
+        this.serviceStatus = "Fejl opstået:" + response.statusText;
+        this.loading = false;
+      }
+    });
+  }
+  createCalendar(id: string, startDate: string) {
+    console.log("createCalendar kaldt");
+    this.calenderService.createCalendar(id,startDate).subscribe(response => {
+      if (response != null && response.ok)
+      {
+        console.log("createCalendar - response:",response);
+        console.log("createCalendar - response body:",response.body);
+        console.log("createCalendar - OK:",response.ok);
+        this.calendarHtml = response.body;
+        this.loading = false;
+      }
+      else {
+        this.serviceStatus = "Fejl opstået:" + response.statusText;
+        this.loading = false;
+      }
+      
+    });
+  }
+
 }

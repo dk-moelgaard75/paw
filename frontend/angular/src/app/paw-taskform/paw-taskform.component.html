@@ -106,5 +106,17 @@
                         <label>Status: </label>
                         <label>{{getStatusLabel()}}</label>
                     </div>
+                </form>
+                    <div> 
+                        <button type="button" [disabled]="loading" class="btn btn-primary btn-sm"  (click)="handleCalendar()"> 
+                            <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+                            Hent kalender
+                        </button> 
+                    </div>
+                    <div class="form-group">
+                        <div [innerHTML]="calendarHtml"></div>
+                    </div>
+
+
     
 

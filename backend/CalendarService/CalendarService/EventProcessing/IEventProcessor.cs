@@ -7,6 +7,6 @@ namespace CalendarService.EventProcessing
 {
     public interface IEventProcessor
     {
-        public string GetCalendarHtml(string guid);
+        public string GetCalendarHtml(string guid, DateTime dateTime);
     }
 }

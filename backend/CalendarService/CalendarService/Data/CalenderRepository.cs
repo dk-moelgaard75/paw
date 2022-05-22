@@ -64,9 +64,9 @@ namespace CalendarService.Data
             return _context.CalendarEmployee.ToList();
         }
         
-        public CalendarEmployeeModel GetCalendarEmployeeByCalendarGuid(Guid id)
+        public IEnumerable<CalendarEmployeeModel> GetCalendarEmployeeByCalendarGuid(Guid id)
         {
-            return _context.CalendarEmployee.FirstOrDefault(p => p.CalenderGuid == id);
+            return _context.CalendarEmployee.Where(p => p.CalendarGuid == id);
         }
 
         public void UpdateCalendarEmployee(CalendarEmployeeModel modifiedEntity)
@@ -100,9 +100,9 @@ namespace CalendarService.Data
         {
             return _context.CalendarTaskObj.ToList();
         }
-        public CalendarTaskObjModel GetCalendarTaskObjByCalendarGuid(Guid id)
+        public IEnumerable<CalendarTaskObjModel> GetCalendarTaskObjByCalendarGuid(Guid id)
         {
-            return _context.CalendarTaskObj.First(p => p.CalendarGuid == id);
+            return _context.CalendarTaskObj.Where(p => p.CalendarGuid == id);
         }
 
         public void UpdateTaskObjCalendar(CalendarTaskObjModel modifiedEntity)

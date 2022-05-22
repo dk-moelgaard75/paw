@@ -15,6 +15,7 @@ namespace CalendarService.EventProcessing
         private readonly IServiceScopeFactory _scopeFactory;
         //private readonly IMapper _mapper;
         private Dictionary<string, string> _htmlDictionary;
+        private int NrOfDaysToDisplay = 8;
         //public EventProcessor(IServiceScopeFactory scopeFactory, IMapper mapper)
         public EventProcessor(IServiceScopeFactory scopeFactory)
         {
@@ -29,15 +30,13 @@ namespace CalendarService.EventProcessing
         {
             if (!_htmlDictionary.ContainsKey(guid))
             {
-                if (IsDataReady(guid))
+                while (!IsDataReady(guid))
                 {
-                    string htmlCalendar = BuildCalendar(guid, startDate);
-                    SetCalendarHtml(guid, htmlCalendar);
+                    //Hack
+                    System.Threading.Thread.Sleep(3000);
                 }
-                else
-                {
-                    return null;
-                }
+                string htmlCalendar = BuildCalendar(guid, startDate);
+                SetCalendarHtml(guid, htmlCalendar);
             }
             return _htmlDictionary[guid];
             
@@ -120,37 +119,136 @@ namespace CalendarService.EventProcessing
                 var repo = scope.ServiceProvider.GetRequiredService<ICalendarRepository>();
                 List<CalendarEmployeeModel> employeeModel = repo.GetCalendarEmployeeByCalendarGuid(calendarGuid).ToList();
                 List<CalendarTaskObjModel> taskModel = repo.GetCalendarTaskObjByCalendarGuid(calendarGuid).ToList();
-                sb.Append("<table style='border: 1px solid black'>");
-                sb.Append(BuildHtmlHeader(startDate));
+                sb.Append("<table style=\"border: 1px solid black\">");
+                
+                //loop thru employees and print red/green based on whether there´s tasks or not (grey for weekends)
+                foreach(CalendarEmployeeModel employee in employeeModel)
+                {
+                    List<CalendarTaskObjModel> subList = taskModel.Where(p => p.Employee == employee.EmployeeGuid).ToList();
+                    sb.Append(BuildEmployeeHtml(employee,subList,startDate,1 ));
+                    sb.Append(BuildEmployeeHtml(employee, subList, startDate, 5));
+                }
+                sb.Append("</table>");
             }
 
-            return sb.ToString();
+            return sb.ToString(); //.Replace("<","&lt;").Replace(">","&gt;");
         }
-
-        private string BuildHtmlHeader(DateTime startDate)
+        public string BuildHtmlHeader(DateTime startDate)
         {
-            //At this point the calendar will allways be 7 days. This should be changed to use _configuration["CalenderSearchNrOfDays"] in the furture
+            //At this point the calendar will allways be 'NrOfDaysToDisplay' days (8). This should be changed to use _configuration["CalenderSearchNrOfDays"] in the furture
             //and be in sync with the same value from TaskService
-            DateTime endDate = startDate.AddDays(7);
-            double nrOfDays = (startDate - endDate).TotalDays;
+            DateTime endDate = startDate.AddDays(NrOfDaysToDisplay);
+            double nrOfDays = (endDate - startDate).TotalDays;
             StringBuilder sb = new StringBuilder();
             sb.Append("	<tr>");
             sb.Append("		<th>medarbejder</th>");
             for (int i = 0; i < nrOfDays; i++)
             {
-                sb.Append("		<th colspan='8'>" + startDate.AddDays(i).ToString("dd-MM-yyyy") + "</th>");
-            }            
+                sb.Append("		<th colspan='9'>" + startDate.AddDays(i).ToString("dd-MM-yyyy") + "</th>");
+            }
             sb.Append("	</tr>");
 
             return sb.ToString();
 
         }
 
-        private string BuildEmployee(List<CalendarEmployeeModel> employeeModel)
+        public string BuildEmployeeHtml(CalendarEmployeeModel employeeModel, List<CalendarTaskObjModel> subList, DateTime startDate, int startValue)
+        {
+            List<string> taskItems = GetTaskItems(subList);
+            StringBuilder sb = new StringBuilder();
+            DateTime endDate = startDate.AddDays(NrOfDaysToDisplay);
+            double nrOfDays = (endDate - startDate).TotalDays;
+
+            //Build firstpart (employee)
+            sb.Append("	<tr>");
+            if (startValue == 1)
+            {
+                sb.Append("		<th>medarbejder</th>");
+            }
+            else
+            {
+                sb.Append("		<th></th>");
+            }
+            for (int i = startValue; i <= nrOfDays; i++)
+            {
+                sb.Append("		<th colspan='9'>" + startDate.AddDays(i-1).ToString("dd-MM-yyyy") + "</th>");
+
+                if (i % 4 == 0)
+                {
+                    //close this part of the table and start over
+                    sb.Append("	</tr>");
+                    sb.Append("	<tr>");
+                    sb.Append("		<td>" + employeeModel.FirstName + " " + employeeModel.LastName + "</td>");
+                    break;
+                }
+            }
+
+            //Build (for each date) 8 section representing the 8 slots avaible
+            for (int i = startValue; i <= nrOfDays; i++)
+            {
+                DateTime currentDate = startDate.AddDays(i-1);
+                //8 o´clock is the starthour - 16 (4 p.m.) end hour
+                for (int j = 8; j <= 16; j++)
+                {
+                    string currentColor = "green";
+                    string hourItem = j.ToString().PadLeft(2, '0');
+                    string dateItem = currentDate.ToString("yyyyMMdd") + hourItem;
+                        
+                    if (currentDate.DayOfWeek == DayOfWeek.Saturday || currentDate.DayOfWeek == DayOfWeek.Sunday)
+                    {
+                        currentColor = "grey";
+                    }
+                    if (taskItems.Contains(dateItem))
+                    {
+                        currentColor = "red";
+                    }
+
+                    sb.Append("		<td bgcolor='" + currentColor + "'>" + hourItem + "</td>");
+                }
+                if (i % 4 == 0)
+                {
+                    //close this part of the table and start over
+                    break;
+                }
+            }
+            sb.Append("	</tr>");
+
+            return sb.ToString();
+        }
+
+
+        private string BuildEmployee(List<CalendarTaskObjModel> employeeModel)
         {
             StringBuilder sb = new StringBuilder();
 
             return sb.ToString();
         }
+        /// <summary>
+        /// Creates a list of dateitem based on the list of calendarojects recieved. The calendarobject has a startdate, a starttime and an estimate hours. If 
+        /// the estimated hours are greate than one the methode returns an item for each hour. I.E - if the calendarobj has 5/6-2022 as startdate, 8 (a.m) as starttime and 
+        /// an estimated hours of 3 the method will return a list containing the followin values: 2022050608, 2022050609, 2022050610, 2022050611
+        /// </summary>
+        /// <param name="subList">A list of CalendarTaskObjModel.</param>
+        /// <returns>A list of dateitem describing workitem on the form YYYYMMDDHH - like: 2022050610 indicating a workitem at 10 a.m. on the 6. of May 2022</returns>
+        public List<string> GetTaskItems(List<CalendarTaskObjModel> subList)
+        {
+            int dailyHourStart = 8; //every workday starts at 8 o'clock
+            List<string> resultList = new List<string>();
+
+            foreach (CalendarTaskObjModel obj in subList)
+            {
+                string dateObj = obj.StartDate.ToString("yyyyMMdd");
+                int startTime = obj.StartTime; //.ToString().PadLeft(2, '0');
+                int estimatedHours = obj.EstimatedHours;
+                for (int i = 0; i <= estimatedHours; i++)
+                {
+                    string startValue = (startTime + i + dailyHourStart).ToString().PadLeft(2, '0');
+                    string itemVal = dateObj + startValue;
+                    resultList.Add(itemVal);
+                }
+            }
+            return resultList;
+        }
+
     }
 }

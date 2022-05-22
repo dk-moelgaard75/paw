@@ -14,8 +14,8 @@ import { retry, catchError,map, pluck } from 'rxjs/operators';
 })
 export class EmployeeService {
   
-  apiURL = 'http://paw.dk/api'; 
-  //apiURL = 'https://localhost:44383/api'
+  //apiURL = 'http://paw.dk/api'; 
+  apiURL = 'https://localhost:44383/api'
   private apiToken: string | null;
   
   

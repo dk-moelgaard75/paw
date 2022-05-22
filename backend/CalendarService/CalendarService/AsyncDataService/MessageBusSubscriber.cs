@@ -119,6 +119,9 @@ namespace CalendarService.AsyncDataService
                 {
                     calendarModel.TaskDone = 1;
                     repo.UpdateCalendar(calendarModel);
+                    PawLogger.DoLog("####################################");
+                    PawLogger.DoLog("TaskDone");
+
                 }
 
             }
@@ -144,6 +147,9 @@ namespace CalendarService.AsyncDataService
                 {
                     calendarModel.EmployeeDone = 1;
                     repo.UpdateCalendar(calendarModel);
+                    PawLogger.DoLog("####################################");
+                    PawLogger.DoLog("EmployeeDone");
+
                 }
             }
         }
