@@ -31,16 +31,27 @@ namespace TaskService.Controllers
         [HttpGet(Name = "Get")]
         public ActionResult Get()
         {
-            return Ok();
+            IEnumerable<TaskObject> tasks = _taskObjRepository.GetAll();
+            return Ok(_mapper.Map<IEnumerable<TaskObjGetDto>>(tasks));
         }
                 
 
+        [HttpGet("employee/{id}", Name = "GetByEmployeeId")]
+        public ActionResult<IEnumerable<TaskObjGetDto>> GetByEmployeeId(Guid id)
+        {
+            PawLogger.DoLog($"TaskService - GetByEmployeeId - Http GET recieved with ID: {id}");
+            IEnumerable<TaskObject> tasks = _taskObjRepository.GetByEmployyeId(id);
+            return Ok(_mapper.Map<IEnumerable<TaskObjGetDto>>(tasks));
+        }
+        
         [HttpGet("{id}", Name = "GetById")]
         public ActionResult<TaskObjGetDto> GetById(Guid id)
         {
-            PawLogger.DoLog($"TaskService - Http GET recieved with ID: {id}");
-            return NotFound();
+            PawLogger.DoLog($"TaskService - GetByEmployeeId - Http GET recieved with ID: {id}");
+            TaskObject task = _taskObjRepository.GetByTaskGuid(id);
+            return Ok(_mapper.Map<TaskObjGetDto>(task));
         }
+
         /* HttpPost creates new instance*/
         [HttpPost]
         public ActionResult<TaskObjGetDto> Post([FromBody] TaskObjCreateDto taskCreateDto)
@@ -54,7 +65,7 @@ namespace TaskService.Controllers
             PawLogger.DoLog("TaskService - post");
             if (taskCreateDto == null)
             {
-                //Console.WriteLine($"CustomerCreateDto is null:");
+                PawLogger.DoLog("TaskService - post - taskCreateDto er null ");
 
                 return StatusCode(500);
             }

@@ -43,7 +43,7 @@ namespace TaskService
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "TaskService", Version = "v1" });
             });
             */
-            string con = Configuration["Data:CommandApiConnection:ConnectionString"];
+            string con = Configuration["Data:CommandApiConnectionPod:ConnectionString"];
             Console.WriteLine($"Task service starting with connectionstring: {con}");
             if (con != null)
             {

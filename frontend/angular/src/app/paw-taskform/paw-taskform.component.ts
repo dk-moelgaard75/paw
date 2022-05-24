@@ -156,10 +156,10 @@ export class PawTaskformComponent implements OnInit {
     let post = {'taskName': this.currentTaskname(), 
                 'description': this.currentTaskdescription(), 
                 'startDate': this.currentTaskstartdate(), 
-                'starthour': this.currentTaskstarttime(),
-                'estimatedhours': this.currentTaskestimatedhours(),
+                'startHour': this.currentTaskstarttime(),
+                'estimatedHours': this.currentTaskestimatedhours(),
                 'customerGuid': this.currentTaskcustomer(),
-                'Employee': this.currentTaskemployee()} as ITaskObj;
+                'employee': this.currentTaskemployee()} as ITaskObj;
     console.log(post); 
     console.log(JSON.stringify(post));
     if (!this._inEditMode) {

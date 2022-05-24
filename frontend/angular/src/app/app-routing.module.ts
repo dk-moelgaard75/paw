@@ -1,3 +1,4 @@
+import { PawTimeregistrationComponent } from './paw-timeregistration/paw-timeregistration.component';
 
 
 import { NgModule } from '@angular/core';
@@ -19,6 +20,7 @@ const routes: Routes = [
   {path : 'task', component: PawTaskformComponent,  canActivate:[AuthGuard]},
   {path : 'no-access', component: PawNoAccessComponent,  canActivate:[AuthGuard]},
   {path : 'tasklist', component: PawTasklistComponent,  canActivate:[AuthGuard]},
+  {path : 'timeregistration/:id', component: PawTimeregistrationComponent,  canActivate:[AuthGuard]},
   {path: '', redirectTo: 'logon', pathMatch: 'full' }
 
 ];

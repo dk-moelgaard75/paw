@@ -34,7 +34,7 @@ namespace CalendarService
             PawLogger.DoLog("Calendar service start:" + DateTime.Now);
 
             string con = Configuration["Data:CommandApiConnectionPod:ConnectionString"];
-            Console.WriteLine($"Employee service starting with connectionstring: {con}");
+            Console.WriteLine($"Calendar service starting with connectionstring: {con}");
             //services.AddDbContext<EmployeeDbContext>(opt => opt.UseNpgsql(con));
             if (con != null)
             {

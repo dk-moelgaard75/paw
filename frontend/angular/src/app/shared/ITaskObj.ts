@@ -1,9 +1,12 @@
 export interface ITaskObj {
+    id: number;
     taskName: string;
     description: string;
     startDate: string;
-    starthour: number;
-    estimatedhours: number;
+    startHour: number;
+    estimatedHours: number;
+    endDate: string;
+    taskGuid: string;
     customerGuid: string;
-    Employee: string;
+    employee: string;
 }

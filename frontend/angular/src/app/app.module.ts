@@ -15,6 +15,7 @@ import { PawNoAccessComponent } from './paw-no-access/paw-no-access.component';
 import { JwtHelperService, JWT_OPTIONS } from '@auth0/angular-jwt';
 import { PawTasklistComponent } from './paw-tasklist/paw-tasklist.component';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { PawTimeregistrationComponent } from './paw-timeregistration/paw-timeregistration.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
     PawHomeComponent,
     PawTaskformComponent,
     PawNoAccessComponent,
-    PawTasklistComponent
+    PawTasklistComponent,
+    PawTimeregistrationComponent
     
   ],
   imports: [

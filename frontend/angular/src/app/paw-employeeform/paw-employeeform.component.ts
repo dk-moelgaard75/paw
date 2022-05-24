@@ -9,8 +9,6 @@ import { Observable, throwIfEmpty } from 'rxjs';
 import { EmployeeService } from '../services/employee.service';
 import { PawNavbarComponent} from '../paw-navbar/paw-navbar.component'
 
-
-
 @Component({
   selector: 'app-paw-employee',
   templateUrl: './paw-employeeform.component.html',

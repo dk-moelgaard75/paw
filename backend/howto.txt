@@ -35,6 +35,28 @@ kubectl get svc --all-namespaces
 Hvis ikke ingress er aktiv (ingress-nginx-controller og ingress-nginx-controller-admission), så kør:
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.1.1/deploy/static/provider/cloud/deploy.yaml
 
+*****************
+*** POSTGRES ****
+*****************
+kubectl apply -f kubectl apply -f local-pv-and-pvc-taskobj.yaml  						--> Opretter diskplads til databasen
+kubectl apply -f kubectl apply -f kubectl apply -f postgres-db-deploy-taskobj.yaml 		--> Opretter selver PG instancen
+kubectl apply -f postgres-nodeport-taskobj-srv.yaml										--> Opret nodeport mappingen
+
+***********************
+*** HUSK HUSK HUSK ****
+***********************
+Ved oprettelse af nye services, skal disse registeres i NGINX
+kubectl apply -f ingress-routing-srv.yaml
+
+
+***********************
+*** BYG OG DEPLOY  ****
+***********************
+build_and_deploy_taskobj.bat 															--> Bygger TaskObjService om deployere den til docker/Kubernetes
+build_and_deploy_employee.bat 															--> Bygger TaskObjService om deployere den til docker/Kubernetes
+OSV. OSV. OSV.
+
+
 
 
 

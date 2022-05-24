@@ -9,8 +9,8 @@ import { retry, catchError,map, pluck, retryWhen, take, delay } from 'rxjs/opera
 })
 export class CalendarService {
 
-  //apiURL = 'http://paw.dk/api'; 
-  apiURL = 'https://localhost:44360/api' 
+  apiURL = 'http://paw.dk/api'; 
+  //apiURL = 'https://localhost:44360/api' 
 
   constructor(private http: HttpClient) { }
   

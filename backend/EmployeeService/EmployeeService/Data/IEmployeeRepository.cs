@@ -16,7 +16,5 @@ namespace EmployeeService.Data
 		void Delete(Employee entityToDelete);
 
 		Tokens Authenticate(string email, string password);
-
-		//Tokens Authenticate(Employee users);
 	}
 }

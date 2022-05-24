@@ -72,6 +72,7 @@ namespace TaskService.AsyncDataServices
         public void PublishNewTask(List<TaskObjPublishedDto> taskObjPublishedDto)
         {
             var message = JsonSerializer.Serialize(taskObjPublishedDto);
+            PawLogger.DoLog("TaskService - PublishNewTask - is connection open?" + RabbitMqUtil.CalenderChannelOutgoing.IsOpen);
             if (RabbitMqUtil.CalenderChannelOutgoing.IsOpen)
             {
                 PawLogger.DoLog("TaskService - RabbitMQ connection is open - sending message:");

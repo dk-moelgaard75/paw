@@ -36,6 +36,13 @@ spec:
                 name: task-clusterip-srv
                 port:
                   number: 80
+          - path: /api/calendar
+            pathType: Prefix
+            backend:
+              service:
+                name: calendar-clusterip-srv
+                port:
+                  number: 80
                   
 
     

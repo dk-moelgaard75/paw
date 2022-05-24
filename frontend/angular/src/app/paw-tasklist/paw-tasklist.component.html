@@ -1,1 +1,18 @@
-<p>paw-tasklist works!</p>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-2 justify-content-around">
+            <app-paw-navbar></app-paw-navbar>
+        </div>
+        <div class="col-8 mainpadding">
+            <ul class="list-group">
+                <li 
+                *ngFor="let curTask of tasks" 
+                class="list-group-item">
+                {{ curTask.taskName }}  - Dato:{{ curTask.startDate}} - kl:{{ curTask.startHour}}  - forventet tidsforbrug: {{ curTask.estimatedHours }}<br>
+                {{ curTask.description }} <br>
+                {{ curTask.taskGuid }}
+                <button class="btn btn-primary btn-sm mx-2 float-end" [routerLink]="['/timeregistration',curTask.taskGuid]">Tid</button>
+                </li> 
+            
+            </ul>
+        </div>

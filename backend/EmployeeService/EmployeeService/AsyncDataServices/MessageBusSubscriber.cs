@@ -51,7 +51,7 @@ private string _queueName;
                     CalenderRequestDto message = JsonSerializer.Deserialize<CalenderRequestDto>(data);
                     PawLogger.DoLog("Message - searchField: " + message.SearchField);
                     PawLogger.DoLog("Message - searchValue: " + message.SearchValue);
-                    PawLogger.DoLog("Message - searchValue: " + message.SearchValue);
+                    PawLogger.DoLog("Message - calID: " + message.CalendarGuid);
                     _messageBusClient.PublishEmployees(_eventProcessor.GetEmployees(message));
                 };
                 RabbitMqUtil.CalenderChannelIncomming.BasicConsume(queue: RabbitMqUtil.CalenderQueueNameIncomming, autoAck: true, consumer: consumer);

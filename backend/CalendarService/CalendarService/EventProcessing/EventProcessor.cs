@@ -240,7 +240,7 @@ namespace CalendarService.EventProcessing
                 string dateObj = obj.StartDate.ToString("yyyyMMdd");
                 int startTime = obj.StartTime; //.ToString().PadLeft(2, '0');
                 int estimatedHours = obj.EstimatedHours;
-                for (int i = 0; i <= estimatedHours; i++)
+                for (int i = 0; i < estimatedHours; i++)
                 {
                     string startValue = (startTime + i + dailyHourStart).ToString().PadLeft(2, '0');
                     string itemVal = dateObj + startValue;

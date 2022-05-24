@@ -64,7 +64,7 @@ namespace TaskService.AsyncDataServices
                                             _configuration["RabbitMQExchange"],
                                             _configuration["RabbitMQRoutingKeyCalendarOutgoing"]);
 
-                PawLogger.DoLog("EmployeeService - connected to RabbitMQ/MessageBus");
+                PawLogger.DoLog("TaskService - connected to RabbitMQ/MessageBus");
                 _classInitialized = true;
             }
             catch (Exception ex)

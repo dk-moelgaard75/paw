@@ -17,6 +17,7 @@ namespace TaskService.DTOs
         
         public Guid TaskGuid { get; set; }
         public Guid CustomerGuid { get; set; }
+        public Guid Employee { get; set; }
 
     }
 }

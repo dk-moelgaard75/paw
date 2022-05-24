@@ -53,17 +53,17 @@ namespace CalendarService.AsyncDataService
                     PawLogger.DoLog("CalendarService - MessageBusSubscribe/Employee - event received:");
                     var body = ea.Body;
                     var data = Encoding.UTF8.GetString(body.ToArray());
-                    PawLogger.DoLog(data);
                     List<EmployeePublishDto> messages = JsonSerializer.Deserialize<List<EmployeePublishDto>>(data);
                     PawLogger.DoLog("####################################");
                     PawLogger.DoLog("EmployeeChannel");
                     PawLogger.DoLog("Nr of Recieved objects:" + messages.Count);
                     foreach (EmployeePublishDto dto in messages)
                     {
-                        PawLogger.DoLog(dto.FirstName);
-                        PawLogger.DoLog(dto.LastName);
-                        PawLogger.DoLog(dto.Email);
-                        PawLogger.DoLog(dto.CalendarGuid.ToString());
+                        PawLogger.DoLog("FN:" + dto.FirstName);
+                        PawLogger.DoLog("FN:" + dto.LastName);
+                        PawLogger.DoLog("FN:" + dto.Email);
+                        PawLogger.DoLog("EID:" + dto.EmployeeGuid);
+                        PawLogger.DoLog("Cal:" + dto.CalendarGuid.ToString());
                     }
 
                     WriteEmployeesToDb(messages);

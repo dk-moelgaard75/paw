@@ -51,6 +51,28 @@ namespace TaskService.Data
             DateTime endDate = startDate.AddDays(addDays);
             return _context.TaskObjs.Where(p => p.StartDate >= startDate.Date && p.StartDate <= endDate.Date);
         }
+        public IEnumerable<TaskObject> GetByEmployyeId(Guid emplGuid) 
+        {
+            //return _context.TaskObjs.Where(p => p.StartDate >= startDate.Date && p.StartDate <= endDate.Date);
+            IEnumerable<TaskObject> dbResult = (from t in _context.TaskObjs
+                                                join e in _context.TaskXEmployee on t.TaskGuid equals e.TaskGuid
+                                                where e.EmployeeGuid == emplGuid
+                                                orderby t.StartDate, t.StartHour
+                                                select new TaskObject
+                                                {
+                                                    Id = t.Id,
+                                                    TaskGuid = t.TaskGuid,
+                                                    TaskName = t.TaskName,
+                                                    Description = t.Description,
+                                                    StartDate = t.StartDate,
+                                                    StartHour = t.StartHour,
+                                                    EstimatedHours = t.EstimatedHours,
+                                                    CustomerGuid = t.CustomerGuid,
+                                                    Employee = e.EmployeeGuid
+                                                }).AsEnumerable<TaskObject>();
+            return dbResult;
+
+        }
 
         public IEnumerable<TaskXEmployee> GetAllEmployees(Guid taskGuid)
         {

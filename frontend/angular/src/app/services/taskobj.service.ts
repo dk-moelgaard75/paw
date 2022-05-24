@@ -8,8 +8,8 @@ import { Observable, throwError } from 'rxjs';
   providedIn: 'root'
 })
 export class TaskobjService {
-  //apiURL = 'http://paw.dk/api';
-  apiURL = 'https://localhost:44324/api';
+  apiURL = 'http://paw.dk/api';
+  //apiURL = 'https://localhost:44324/api';
 
   constructor(private http: HttpClient) {}
   /*========================================
@@ -30,9 +30,30 @@ export class TaskobjService {
       {observe: 'response'})
       .pipe(retry(1), catchError(this.handleError)); 
   }
-  getTask(id: any): Observable<ITaskObj> {
+  getTasksByEmployeeId(id: string): Observable<HttpResponse<ITaskObj[]>> {
+    return this.http.get<ITaskObj[]>(
+      this.apiURL + '/task/employee/' + id,
+      {headers: new HttpHeaders({'Content-Type':  'application/json'}),observe: 'response'}
+      )
+      .pipe(retry(1), catchError(this.handleError)); 
+  }
+
+  getTask(id: any): Observable<HttpResponse<ITaskObj>> {
     return this.http
-      .get<ITaskObj>(this.apiURL + '/task/' + id)
+      .get<ITaskObj>(this.apiURL + '/task/' + id,
+      {headers: new HttpHeaders({'Content-Type':  'application/json'}),observe: 'response'})
+      .pipe(retry(1), catchError(this.handleError));
+  }
+  getTaskByTaskGuid(id: any): Observable<HttpResponse<ITaskObj>> {
+    return this.http
+      .get<ITaskObj>(this.apiURL + '/task/' + id,
+      {headers: new HttpHeaders({'Content-Type':  'application/json'}),observe: 'response'})
+      .pipe(retry(1), catchError(this.handleError));
+  }
+  getTaskWithoutHeader(id: any): Observable<ITaskObj> {
+    return this.http
+      .get<ITaskObj>(this.apiURL + '/task/' + id,
+      {headers: new HttpHeaders({'Content-Type':  'application/json'})})
       .pipe(retry(1), catchError(this.handleError));
   }
 

@@ -1,5 +1,5 @@
-cd D:\udv\paw\backend\CalendarService
-docker build -t dkmoelgaard75/calenderservice -f "CalendarService/Dockerfile" .
+cd D:\udv\paw\backend\CalendarService\
+docker build -t dkmoelgaard75/calendarservice -f "CalendarService/Dockerfile" .
 docker push dkmoelgaard75/calendarservice
 
 cd D:\udv\paw\backend\Kubernetes\

@@ -65,7 +65,6 @@ export class PawLogonComponent implements OnInit {
             this.router.navigate([this.returnUrl]);
           },
           error: (err: any) => { 
-              
               this.error = 'Logon mislykkeds';
               this.loading = false;
               }

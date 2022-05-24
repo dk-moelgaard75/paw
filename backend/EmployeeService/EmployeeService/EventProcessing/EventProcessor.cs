@@ -63,9 +63,12 @@ namespace EmployeeService.EventProcessing
                 {
                     employees = repo.GetAll().Where(t => t.Email.Equals(notifcationMessage.SearchValue));
                 }
+                PawLogger.DoLog("GetEmployeesFromDB");
                 foreach (Employee emp in employees)
                 {
+                    PawLogger.DoLog("emp UID:" + emp.UID);
                     EmployeePublishedDto dto = _mapper.Map<EmployeePublishedDto>(emp);
+                    PawLogger.DoLog("dto Guid:" + dto.EmployeeGuid);
                     dto.CalendarGuid = Guid.Parse(notifcationMessage.CalendarGuid);
                     list.Add(dto);
                 }

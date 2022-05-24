@@ -11,6 +11,7 @@ namespace TaskService.Data
 		int Create(TaskObject newEntity);
 		IEnumerable<TaskObject> GetAll();
 		IEnumerable<TaskObject> GetByStartDate(DateTime startDate);
+		IEnumerable<TaskObject> GetByEmployyeId(Guid employeeGuid);
 		TaskObject GetById(int id);
 		TaskObject GetByCustomerGuid(Guid customerGuid);
 		TaskObject GetByTaskGuid(Guid taskGuid);
