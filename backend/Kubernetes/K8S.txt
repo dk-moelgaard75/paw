@@ -1,2 +1,26 @@
-Kubernetes kaldes sommetider K8S
-local-pvc => pvc = persistant volumne claime (lokalt)
+Filer der starter med _ er gamle filer, der fungere som dokumentation.
+For at bygge fra bunden starter man med:
+	local-pv-and-pvc-*.yaml
+Disse filer opretter volume og volumeclaim til brug for Databaserne
+Herefter køres
+	postgres-db-deploy-*.yaml
+Disse henter og initialisere Postgres databaserne
+Herefter køres
+	postgres-nodeport-*-srv
+Disse skaber en portmapning mellem host pc´en og de enkelte instanser af databaserne. Portnumrene finder man med: kubectl get services
+Herefter køres
+	build_and_deploy_*.bat
+Disse batfiler bygger koden, skubber dem til DockerHub, samt eksekvere en tilhørende yaml-fil, der henter images´et igen og oprette den som service
+Til slut skal disse kommandoer køres - de sørger for opsætningen af ingres og rabbitmq
+kubectl apply -f deploy-rabbitmq.yaml
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.1.1/deploy/static/provider/cloud/deploy.yaml
+kubectl apply -f ingress-routing-srv.yaml
+kubectl apply -f deploy-rabbitmq.yaml
+kubectl apply -f nginx_loadbalancer_rabbitmq.yaml
+
+
+
+	
+
+
+
