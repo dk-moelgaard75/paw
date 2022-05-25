@@ -29,7 +29,7 @@ namespace CalendarService.Controllers
             _eventProcessor = processor;
             _calendarRepository = calendarRepository;
         }
-        [HttpGet("{guid}/{startdate}", Name="GetCalendarWithId")]
+        [HttpGet("{guid}/{startdate}", Name="GetCalendarWithId")] //URL: localhost/calendar/0340190f-aa45-4589-87ab-6a3838693f88/2022-05-31
         public string GetCalendarWithId(string guid, string startdate)
         {
             DateTime dt = DateTime.ParseExact(startdate.ToString(), "yyyy-MM-dd", CultureInfo.InvariantCulture);
