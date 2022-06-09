@@ -1,3 +1,4 @@
+import { AsyncValidatorFn } from '@angular/forms';
 //Alternativ look at:_ https://www.linkedin.com/pulse/3-steps-make-your-reactive-form-typesafe-angular-aart-den-braber/
 import { IEmployee } from './../shared/IEmployee';
 import { Component, OnInit,ChangeDetectorRef  } from '@angular/core';
@@ -8,6 +9,7 @@ import { HttpClient, HttpParams, HttpHeaders,HttpResponse,HttpEvent, HttpEventTy
 import { Observable, throwIfEmpty } from 'rxjs';
 import { EmployeeService } from '../services/employee.service';
 import { PawNavbarComponent} from '../paw-navbar/paw-navbar.component'
+import { PawEmployeeValidator } from './paw-employee.validator';
 
 @Component({
   selector: 'app-paw-employee',
@@ -36,15 +38,19 @@ export class PawEmployeeComponent implements OnInit {
   private _userValidated: boolean = false;
 
   constructor(emplService: EmployeeService,private changeDetection: ChangeDetectorRef) { 
+    this.employeeService = emplService;
+    
+    
+    
     console.log("Constructor")
     this.apiToken = localStorage.getItem('token');
     if (this.apiToken != null)
     {
       this._userValidated = true;
     }
-
+    this.employeeForm.controls["email"].addAsyncValidators(this.employeeService.uniqueEmailValidator())
     
-    this.employeeService = emplService;
+    
 
   }
 

@@ -1,19 +1,20 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
-  name: postgres-taskobj
+  name: postgres-db-taskobj
 spec:
+  serviceName: postgres-taskobj-clusterip-srv
   replicas: 1
   selector:
     matchLabels:
-      app: postgres-taskobj
+      app: postgres-db-taskobj
   template:
     metadata:
       labels:
-        app: postgres-taskobj
+        app: postgres-db-taskobj
     spec:
       containers:
-        - name: postgres-taskobj
+        - name: postgres-db-taskobj
           image: postgres:10.1
           ports:
             - containerPort: 5432
@@ -24,9 +25,11 @@ spec:
               value: taskobj
             - name: POSTGRES_PASSWORD
               value: taskobj
+            - name: PGDATA
+              value: /var/lib/postgresql/data/taskobj
           volumeMounts:
-            - mountPath: /var/lib/postgresql/taskobj/data
-              name: postgres-taskobj-pv-claim
+            - name: postgres-taskobj-pv-claim
+              mountPath: /var/lib/postgresql/taskobj/data
       volumes:
       - name: postgres-taskobj-pv-claim
         persistentVolumeClaim:
@@ -39,9 +42,9 @@ metadata:
 spec:
   type: ClusterIP
   selector:
-    app: postgres-taskobj
+    app: postgres-db-taskobj
   ports:
-  - name: postgres-taskobj
+  - name: postgres-db-taskobj
     protocol: TCP
     port: 5432
     targetPort: 5432 

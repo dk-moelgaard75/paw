@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres-db-timereg
+spec:
+  serviceName: postgres-timereg-clusterip-srv
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres-db-timereg
+  template:
+    metadata:
+      labels:
+        app: postgres-db-timereg
+    spec:
+      containers:
+        - name: postgres-db-timereg
+          image: postgres:10.1
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: timereg
+            - name: POSTGRES_USER
+              value: timereg
+            - name: POSTGRES_PASSWORD
+              value: timereg
+            - name: PGDATA
+              value: /var/lib/postgresql/data/timereg
+          volumeMounts:
+            - name: postgres-timereg-pv-storage
+              mountPath: /var/lib/postgresql/timereg/data
+      volumes:
+      - name: postgres-timereg-pv-storage
+        persistentVolumeClaim:
+          claimName: postgres-timereg-pv-claim
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-timereg-clusterip-srv
+spec:
+  type: ClusterIP
+  selector:
+    app: postgres-db-timereg
+  ports:
+  - name: postgres-db-timereg
+    protocol: TCP
+    port: 5432
+    targetPort: 5432 

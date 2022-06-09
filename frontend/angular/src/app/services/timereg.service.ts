@@ -18,8 +18,8 @@ export class TimeregService {
     return this.http
       .post<ITimeReg>( 
         this.apiURL + '/timereg',
-        JSON.stringify(timereg),
-        {headers: new HttpHeaders({'Content-Type':  'application/json'})}
+        timereg,
+        {headers: new HttpHeaders({'Content-Type':  'application/json'}),observe: 'response'}
       )
       .pipe(retry(1), catchError(this.handleError));
   }

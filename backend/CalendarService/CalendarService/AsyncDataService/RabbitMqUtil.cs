@@ -23,6 +23,7 @@ namespace CalendarService.AsyncDataService
         private static bool _classInitialized = false;
         public static void Initialize(IConfiguration configuration)
         {
+            string message = "";
             _configuration = configuration;
             var factory = new ConnectionFactory()
             {
@@ -31,15 +32,27 @@ namespace CalendarService.AsyncDataService
             };
             try
             {
+                message = "PAW:Creating connection";
                 _connection = factory.CreateConnection();
+                
+                message = "PAW:Creating _channelEmployeeIncomming";
                 _channelEmployeeIncomming = _connection.CreateModel();
+                
+                message = "PAW:Creating _channelEmployeeOutgoing";
                 _channelEmployeeOutgoing = _connection.CreateModel();
+                
+                message = "PAW:Creating _channelTaskIncomming";
                 _channelTaskIncomming = _connection.CreateModel();
+                
+                message = "PAW:Creating _channelTaskOutgoing";
                 _channelTaskOutgoing = _connection.CreateModel();
 
                 //Declare Exchange - common for messages sent to both EmployeeService and TaskService
+                message = "PAW:Creating ExchangeDeclare (incom):" + _configuration["RabbitMQExchange"];
                 _channelEmployeeIncomming.ExchangeDeclare(exchange: _configuration["RabbitMQExchange"],
                                                 type: ExchangeType.Direct);
+                
+                message = "PAW:Creating ExchangeDeclare (outgo):" + _configuration["RabbitMQExchange"];
                 _channelEmployeeOutgoing.ExchangeDeclare(exchange: _configuration["RabbitMQExchange"],
                                                 type: ExchangeType.Direct);
 
@@ -48,6 +61,7 @@ namespace CalendarService.AsyncDataService
                 //Durable is false - if the message is lost the user will try again
                 //Exclusive is false - other entities can alter the queue
                 //Autodelete is true - no need for messages to be deleted programmatically
+                message = "PAW:Creating _employeeQueueNameIncomming:" + _configuration["RabbitMQQueueEmployeeIncomming"];
                 _employeeQueueNameIncomming = _channelEmployeeIncomming.QueueDeclare(
                                                 _configuration["RabbitMQQueueEmployeeIncomming"], 
                                                 false, 
@@ -55,35 +69,41 @@ namespace CalendarService.AsyncDataService
                                                 false, 
                                                 null).QueueName;
 
+                message = "PAW:Creating _channelEmployeeIncomming (QueueBind):" + _configuration["RabbitMQExchange"] + "/" + _configuration["RabbitMQRoutingKeyEmployeeIncomming"];
                 _channelEmployeeIncomming.QueueBind(_employeeQueueNameIncomming,
                                             _configuration["RabbitMQExchange"],
                                             _configuration["RabbitMQRoutingKeyEmployeeIncomming"]);
 
+                message = "PAW:Creating _channelEmployeeOutgoing (QueueDeclare):" + _configuration["RabbitMQQueueEmployeeOutgoing"];
                 _employeeQueueNameOutgoing = _channelEmployeeOutgoing.QueueDeclare(
                                                 _configuration["RabbitMQQueueEmployeeOutgoing"],
                                                 false,
                                                 false,
                                                 false,
                                                 null).QueueName;
-
+                
+                message = "PAW:Creating _channelEmployeeOutgoing (QueueBind):" + _configuration["RabbitMQExchange"] + "/" + _configuration["RabbitMQRoutingKeyEmployeeOutgoing"];
                 _channelEmployeeOutgoing.QueueBind(_employeeQueueNameOutgoing,
                                         _configuration["RabbitMQExchange"],
                                         _configuration["RabbitMQRoutingKeyEmployeeOutgoing"]);
 
                 /*****************************************************************************/
-
+                
+                message = "PAW:Creating _taskQueueNameIncomming:" + _configuration["RabbitMQQueueTaskIncomming"];
                 _taskQueueNameIncomming = _channelTaskIncomming.QueueDeclare(
                                                 _configuration["RabbitMQQueueTaskIncomming"],
                                                 false,
                                                 false,
                                                 false,
                                                 null).QueueName;
-
+                
+                message = "PAW:Creating _channelTaskIncomming (QueueBind):" + _configuration["RabbitMQExchange"] + "/" + _configuration["RabbitMQRoutingKeyTaskIncomming"];
                 _channelTaskIncomming.QueueBind(_taskQueueNameIncomming,
                                         _configuration["RabbitMQExchange"],
                                         _configuration["RabbitMQRoutingKeyTaskIncomming"]);
 
 
+                message = "PAW:Creating _taskQueueNameOutgoing (QueueDeclare):" + _configuration["RabbitMQQueueTaskOutgoing"];
                 _taskQueueNameOutgoing = _channelTaskOutgoing.QueueDeclare(
                                                 _configuration["RabbitMQQueueTaskOutgoing"],
                                                 false,
@@ -91,6 +111,7 @@ namespace CalendarService.AsyncDataService
                                                 false,
                                                 null).QueueName;
 
+                message = "PAW:Creating _channelTaskOutgoing (QueueBind):" + _configuration["RabbitMQExchange"] + "/" + _configuration["RabbitMQRoutingKeyTaskOutgoing"];
                 _channelTaskOutgoing.QueueBind(_taskQueueNameOutgoing,
                                         _configuration["RabbitMQExchange"],
                                         _configuration["RabbitMQRoutingKeyTaskOutgoing"]);
@@ -100,7 +121,7 @@ namespace CalendarService.AsyncDataService
             }
             catch (Exception ex)
             {
-                PawLogger.DoLog(string.Format("Could not connect to message bus {0}", ex.Message));
+                PawLogger.DoLog(string.Format("Could not connect to message bus {0}{1}", ex.Message, message));
                 _classInitialized = false;
             }
 

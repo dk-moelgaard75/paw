@@ -15,6 +15,13 @@ spec:
                 name: employee-clusterip-srv
                 port:
                   number: 80
+          - path: /api/verify
+            pathType: Prefix
+            backend:
+              service:
+                name: employee-clusterip-srv
+                port:
+                  number: 80
           - path: /api/authentication
             pathType: Prefix
             backend:
@@ -23,6 +30,13 @@ spec:
                 port:
                   number: 80
           - path: /api/customer
+            pathType: Prefix
+            backend:
+              service:
+                name: customer-clusterip-srv
+                port:
+                  number: 80
+          - path: /api/getcustomer
             pathType: Prefix
             backend:
               service:
@@ -41,6 +55,13 @@ spec:
             backend:
               service:
                 name: calendar-clusterip-srv
+                port:
+                  number: 80
+          - path: /api/timereg
+            pathType: Prefix
+            backend:
+              service:
+                name: timereg-clusterip-srv
                 port:
                   number: 80
                   

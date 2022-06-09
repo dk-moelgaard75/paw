@@ -68,7 +68,7 @@ namespace CustomerService
             }
             else
             {
-                services.AddDbContext<CustomerDbContext>(opt => opt.UseNpgsql(Configuration.GetConnectionString("DbConnection")));
+                services.AddDbContext<CustomerDbContext>(opt => opt.UseNpgsql(Configuration["Data:CommandApiConnection:ConnectionString"]));
             }
             services.AddScoped<ICustomerRepository, CustomerRepository>();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());

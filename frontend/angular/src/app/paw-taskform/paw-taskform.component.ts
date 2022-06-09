@@ -14,6 +14,8 @@ import { HttpClient, HttpParams, HttpHeaders,HttpResponse,HttpEvent, HttpEventTy
 import { async } from 'rxjs/internal/scheduler/async';
 
 
+
+
 @Component({
   selector: 'app-paw-taskform',
   templateUrl: './paw-taskform.component.html',
@@ -34,6 +36,7 @@ export class PawTaskformComponent implements OnInit {
   private curCalendarId : string = '';
   public loading: boolean = false;
   public tasks: ITaskObj[] = [];
+  private curDate: string = '';
   
   public calendarHtml: string = '';
   private serviceStatus: string = "N/A";
@@ -89,15 +92,16 @@ export class PawTaskformComponent implements OnInit {
   get taskstartdate() {
     return this.taskForm.get('taskstartdate')!;
   }
+  updateSelectedDate(date:NgbDate) {
+    let curY = date.year;
+    let curM = this.addLeadingZeros(date.month, 2);
+    let curD = this.addLeadingZeros(date.day, 2);
+    this.curDate = curY + "-" + curM + "-" + curD;
+    console.log("curDate:" + this.curDate);
+  }
+
   currentTaskstartdate(){
-    let curDate = this.taskForm.get('taskstartdate')!.value;
-    console.log(curDate);
-    let curY = curDate.year;
-    let curM = this.addLeadingZeros(curDate.month, 2);
-    let curD = this.addLeadingZeros(curDate.day, 2);
-    let newDate = curY + "-" + curM + "-" + curD;
-    console.log(newDate);
-    return newDate;
+    return this.curDate;
   }
   addLeadingZeros(num: number, totalLength: number): string {
     return String(num).padStart(totalLength, '0');
@@ -106,15 +110,14 @@ export class PawTaskformComponent implements OnInit {
     return this.taskForm.get('taskstarttime')!;
   }
   currentTaskstarttime(){
-    return this.taskForm.get('taskstarttime')!.value;
+    return Number(this.taskForm.get('taskstarttime')!.value);
   }
   get taskestimatedhours() {
     return this.taskForm.get('taskestimatedhours')!;
   }
   currentTaskestimatedhours(){
-    return this.taskForm.get('taskestimatedhours')!.value;
+    return Number(this.taskForm.get('taskestimatedhours')!.value);
   }
-
 
   get taskcustomer() {
     return this.taskForm.get('taskcustomer')!;
@@ -123,7 +126,7 @@ export class PawTaskformComponent implements OnInit {
     return this.taskForm.get('taskcustomer')!.value;
   }
 
-  get taskemployee() {
+  get taskemployee() { 
     return this.taskForm.get('taskemployee')!;
   }
   currentTaskemployee(){
@@ -153,11 +156,14 @@ export class PawTaskformComponent implements OnInit {
 
   createOrUpdateTask() {
     console.log('createOrUpdateTask kaldt - editMode:' + this._inEditMode);
-    let post = {'taskName': this.currentTaskname(), 
+    let post = {
+                'taskName': this.currentTaskname(), 
                 'description': this.currentTaskdescription(), 
                 'startDate': this.currentTaskstartdate(), 
                 'startHour': this.currentTaskstarttime(),
                 'estimatedHours': this.currentTaskestimatedhours(),
+                'endDate': '',
+                'taskGuid': '',
                 'customerGuid': this.currentTaskcustomer(),
                 'employee': this.currentTaskemployee()} as ITaskObj;
     console.log(post); 
@@ -196,8 +202,9 @@ export class PawTaskformComponent implements OnInit {
     */
   }
   handleCalendar() {
+      
       let curDate = this.currentTaskstartdate();
-      if (curDate !== 'undefined-undefined-undefined')
+      if (curDate != null && curDate !== 'undefined-undefined-undefined' && curDate !== 'NaN-NaN-NaN')
       {
         this.getCalenderId(curDate);
       }
@@ -218,7 +225,7 @@ export class PawTaskformComponent implements OnInit {
         console.log("getCalenderId - response body:",response.body);
         this.curCalendarId = response.body;
         console.log("getCalenderId - OK:",response.ok);
-        this.createCalendar(this.curCalendarId,this.currentTaskstartdate());  
+        this.createCalendar(this.curCalendarId,this.currentTaskstartdate()!);  
       }
       else {
         this.serviceStatus = "Fejl opstået:" + response.statusText;

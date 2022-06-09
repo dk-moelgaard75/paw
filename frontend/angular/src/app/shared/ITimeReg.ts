@@ -1,7 +1,7 @@
 export interface ITimeReg {
     id: number;
     regdate: string;
-    reghours: number;
+    hours: number;
     taskGuid: string;
-    employee: string;
+    EmployeeGuid: string;
 }

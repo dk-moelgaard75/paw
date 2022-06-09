@@ -30,7 +30,6 @@ spec:
           volumeMounts:
             - name: postgres-employee-pv-storage
               mountPath: /var/lib/postgresql/data
-              
       volumes:
       - name: postgres-employee-pv-storage
         persistentVolumeClaim:

@@ -36,6 +36,7 @@
                             placeholder="yyyy-mm-dd"
                             name="dp"
                             ngbDatepicker  #d="ngbDatepicker"
+                            (dateSelect)="updateSelectedDate($event)"
                             class="form-control">
                             <div class="input-group-append">
                                 <button class="bi bi-calendar" (click)="d.toggle()" type="button"></button>

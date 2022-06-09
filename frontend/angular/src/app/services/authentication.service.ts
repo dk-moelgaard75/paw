@@ -26,7 +26,6 @@ export class AuthenticationService {
     
     login(customer: string): Observable<HttpResponse<IToken>> {
       console.log("login called");
-      console.log("customer:" + customer);
       return this.http
         .post<IToken>(
           this.apiURL + '/authentication/',

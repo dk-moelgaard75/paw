@@ -45,6 +45,10 @@ namespace CustomerService.Data
         {
             return _context.Customers.FirstOrDefault(p => p.Id == id);
         }
+        public Customer GetByGuid(Guid id)
+        {
+            return _context.Customers.FirstOrDefault(p => p.UID == id);
+        }
 
         public void Update(Customer modifiedEntity)
         {

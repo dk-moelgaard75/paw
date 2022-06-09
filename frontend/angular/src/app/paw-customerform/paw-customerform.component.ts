@@ -75,7 +75,7 @@ export class PawCustomerformComponent implements OnInit {
     return this.customerForm.get('zip')!;
   }
   currentZip() {
-    return this.customerForm.get('zip')!.value;
+    return Number(this.customerForm.get('zip')!.value);
   }
 
   get country() {
@@ -155,7 +155,7 @@ export class PawCustomerformComponent implements OnInit {
       this.email.setValue(response.email);
       this.phone.setValue(response.phone);
       this.address.setValue(response.address);
-      this.zip.setValue(response.zip);
+      this.zip.setValue(response.zip.toString());
       this.country.setValue(response.country);
 
     })

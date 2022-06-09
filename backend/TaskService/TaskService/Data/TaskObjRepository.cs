@@ -38,7 +38,7 @@ namespace TaskService.Data
 
         public IEnumerable<TaskObject> GetAll()
         {
-            return _context.TaskObjs.ToList();
+            return _context.TaskObjs.OrderBy(x => x.StartDate).ToList();
         }
         public IEnumerable<TaskObject> GetByStartDate(DateTime startDate)
         {
@@ -57,7 +57,7 @@ namespace TaskService.Data
             IEnumerable<TaskObject> dbResult = (from t in _context.TaskObjs
                                                 join e in _context.TaskXEmployee on t.TaskGuid equals e.TaskGuid
                                                 where e.EmployeeGuid == emplGuid
-                                                orderby t.StartDate, t.StartHour
+                                                orderby t.StartDate ascending
                                                 select new TaskObject
                                                 {
                                                     Id = t.Id,

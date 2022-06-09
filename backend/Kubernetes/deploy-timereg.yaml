@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: timereg-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: timeregservice
+  template:
+    metadata:
+      labels:
+        app: timeregservice
+    spec:
+      containers:
+        - name: timeregservice
+          image: dkmoelgaard75/timeregservice:latest
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: timereg-clusterip-srv
+spec:
+  type: ClusterIP
+  selector:
+    app: timeregservice
+  ports:
+  - name: timeregservice
+    protocol: TCP
+    port: 80
+    targetPort: 80

@@ -4,7 +4,7 @@ import { HttpClient, HttpHeaders, HttpResponse,HttpEvent} from '@angular/common/
 import { ICustomer } from '../shared/ICustomer';
 import { Observable, throwError } from 'rxjs';
 import { retry, catchError,map, pluck } from 'rxjs/operators';
-import { Icu } from '@angular/compiler/src/i18n/i18n_ast';
+
 
 
 @Injectable({
@@ -33,6 +33,12 @@ export class CustomerService {
   getCustomer(id: any): Observable<ICustomer> {
     return this.http
       .get<ICustomer>(this.apiURL + '/customer/' + id,
+      {headers: new HttpHeaders({'Content-Type':  'application/json','Authorization' : 'Bearer ' + this.apiToken})})
+      .pipe(retry(1), catchError(this.handleError));
+  }
+  getCustomerByGuid(guid: any): Observable<ICustomer> {
+    return this.http
+      .get<ICustomer>(this.apiURL + '/getcustomer/' + guid,
       {headers: new HttpHeaders({'Content-Type':  'application/json','Authorization' : 'Bearer ' + this.apiToken})})
       .pipe(retry(1), catchError(this.handleError));
   }

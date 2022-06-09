@@ -9,6 +9,7 @@ import { HttpClient, HttpHeaders, HttpResponse,HttpEvent} from '@angular/common/
 import { IEmployee } from '../shared/IEmployee';
 import { Observable, throwError } from 'rxjs';
 import { retry, catchError,map, pluck } from 'rxjs/operators';
+import { AbstractControl, AsyncValidatorFn, ValidationErrors } from '@angular/forms';
 
 @Injectable({
   providedIn: 'root'
@@ -39,15 +40,6 @@ export class EmployeeService {
         )
       .pipe(retry(1), catchError(this.handleError)); 
   }
-
-
-  getEmployeesWithoutHeader() : Observable<IEmployee[]>{
-    return this.http.get<IEmployee[]>(
-      this.apiURL +'/employee/',
-      {headers: new HttpHeaders({'Content-Type':  'application/json', 'Authorization' : 'Bearer ' + this.apiToken})}).
-      pipe(retry(1),catchError(this.handleError));
-  }
-
   // HttpClient API get() method => Fetch employee
   getEmployee(id: any): Observable<IEmployee> {
     return this.http
@@ -55,7 +47,13 @@ export class EmployeeService {
       {headers: new HttpHeaders({'Content-Type':  'application/json', 'Authorization' : 'Bearer ' + this.apiToken})})
       .pipe(retry(1), catchError(this.handleError));
   }
-
+  getEmployeeByEmail(email: string): Observable<HttpResponse<IEmployee>> {
+    console.log('getEmployeeByEmail:' + email);
+    return this.http
+      .get<IEmployee>(this.apiURL + '/verify/' + email,
+      {headers: new HttpHeaders({'Content-Type':  'application/json', 'Authorization' : 'Bearer ' + this.apiToken}),observe: 'response'})
+      .pipe(retry(1)); 
+  }
   // HttpClient API post() method => Create employee
   createEmployee(employee: IEmployee): Observable<IEmployee> {
     return this.http
@@ -66,6 +64,14 @@ export class EmployeeService {
       )
       .pipe(retry(1), catchError(this.handleError));
   }
+  getEmployeesWithoutHeader() : Observable<IEmployee[]>{
+    return this.http.get<IEmployee[]>(
+      this.apiURL +'/employee/',
+      {headers: new HttpHeaders({'Content-Type':  'application/json', 'Authorization' : 'Bearer ' + this.apiToken})}).
+      pipe(retry(1),catchError(this.handleError));
+  }
+
+
 
   createEmployeeWithHeaders(employee: IEmployee): Observable<HttpResponse<IEmployee>> {
     return this.http
@@ -102,6 +108,18 @@ export class EmployeeService {
       .delete(this.apiURL + '/employee/' + id, 
       {headers: new HttpHeaders({'Content-Type':  'application/json', 'Authorization' : 'Bearer ' + this.apiToken}),observe: 'response'})
       .pipe(retry(1), catchError(this.handleError));
+  }
+  uniqueEmailValidator(): AsyncValidatorFn {
+    return (control: AbstractControl): Observable<ValidationErrors | null> => {
+        
+      return this.http
+        .get<IEmployee>(this.apiURL + '/verify/' + control.value,
+          { headers: new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + this.apiToken }), observe: 'response' }).
+        pipe(
+          map((exists) => (exists ? { emailExists: true } : null)),
+          catchError(async (err) => null)
+        );
+    };
   }
   // Error handling
   handleError(error: any) {

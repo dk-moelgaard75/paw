@@ -1,4 +1,5 @@
-import { NgModule } from '@angular/core';
+import { EmployeeService } from './services/employee.service';
+import { Injector, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';  // <<<< import it here
 
@@ -16,7 +17,9 @@ import { JwtHelperService, JWT_OPTIONS } from '@auth0/angular-jwt';
 import { PawTasklistComponent } from './paw-tasklist/paw-tasklist.component';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { PawTimeregistrationComponent } from './paw-timeregistration/paw-timeregistration.component';
+import { DatePipe } from '@angular/common';
 
+export let AppInjector: Injector;
 @NgModule({
   declarations: [
     AppComponent,
@@ -28,20 +31,25 @@ import { PawTimeregistrationComponent } from './paw-timeregistration/paw-timereg
     PawTaskformComponent,
     PawNoAccessComponent,
     PawTasklistComponent,
-    PawTimeregistrationComponent
-    
+    PawTimeregistrationComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     ReactiveFormsModule,
     HttpClientModule,
-    NgbModule
+    NgbModule,
   ],
   providers: [
     { provide: JWT_OPTIONS, useValue: JWT_OPTIONS },
-     JwtHelperService
+     JwtHelperService,
+     DatePipe
     ],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+
+export class AppModule {
+  constructor(private injector: Injector) {
+    AppInjector = this.injector;
+  }
+ }

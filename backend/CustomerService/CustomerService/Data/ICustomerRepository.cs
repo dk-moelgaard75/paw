@@ -11,6 +11,7 @@ namespace CustomerService.Data
 		int Create(Customer newEntity);
 		IEnumerable<Customer> GetAll();
 		Customer GetById(int id);
+		Customer GetByGuid(Guid id);
 		Customer GetByEmail(string email);
 		void Update(Customer modifiedEntity);
 		void Delete(Customer entityToDelete);

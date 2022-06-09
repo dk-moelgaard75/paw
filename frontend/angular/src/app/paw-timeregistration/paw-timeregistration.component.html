@@ -6,37 +6,47 @@
         <div class="col-8 mainpadding">
             Opgave:{{task.taskName}}  <br>
             Beskrivelse:{{task.description}}
-        </div>
-        <form [formGroup]="timeregForm" (ngSubmit)="createTimeRegistration()">  
-        <div class="form-group">
-            <label for="timeregdate">Dato</label>
-            <input 
-                formControlName="timeregdate"
-                id="timeregdate" 
-                placeholder="yyyy-mm-dd"
-                name="dp"
-                ngbDatepicker  #d="ngbDatepicker"
-                class="form-control">
-                <div class="input-group-append">
-                    <button class="bi bi-calendar" (click)="d.toggle()" type="button"></button>
-                  </div>
-                  <div *ngIf="timeregdate?.touched && timeregdate?.invalid" class="alert alert-danger">
-                    <div *ngIf="timeregdate?.errors?.['required']" >Der skal angives en dato</div>
+        
+            <form [formGroup]="timeregForm" (ngSubmit)="createTimeRegistration()">  
+                <div class="form-group">
+                    <label for="timeregdate">Dato</label>
+                    <input 
+                        formControlName="timeregdate"
+                        id="timeregdate" 
+                        placeholder="yyyy-mm-dd"
+                        name="dp"
+                        ngbDatepicker  #d="ngbDatepicker"
+                        (dateSelect)="updateSelectedDate($event)"
+                        class="form-control">
+                        <div class="input-group-append">
+                            <button class="bi bi-calendar" (click)="d.toggle()" type="button"></button>
+                        </div>
+                        <div *ngIf="timeregdate?.touched && timeregdate?.invalid" class="alert alert-danger">
+                            <div *ngIf="timeregdate?.errors?.['required']" >Der skal angives en dato</div>
+                        </div>
                 </div>
-        </div>
-        <div class="form-group">
-            <label for="timereghours">Timer</label>
-            <input 
-                formControlName="timereghours" 
-                id="timereghours" 
-                type="text" 
-                class="form-control">
-                <div *ngIf="timereghours?.touched && timereghours?.invalid" class="alert alert-danger">
-                    <div *ngIf="timereghours?.errors?.['required']" >Der skal angives timer</div>
+                <div class="form-group">
+                    <label for="timereghours">Timer</label>
+                    <input 
+                        formControlName="timereghours" 
+                        id="timereghours" 
+                        type="text" 
+                        class="form-control">
+                        <div *ngIf="timereghours?.touched && timereghours?.invalid" class="alert alert-danger">
+                            <div *ngIf="timereghours?.errors?.['required']" >Der skal angives timer</div>
+                            <div *ngIf="timereghours?.errors?.['pattern']" >Timer skal angive med punktum (eks: 1.0)</div>
+                        </div>
                 </div>
-        </div>
-        <div>
-            <button class="btn btn-primary btn-sm" type="submit">Opret kunde</button>
+                <div>
+                    <button class="btn btn-primary btn-sm" type="submit">Registrer timer</button>
+                </div>
+            </form>
+            <br />
+            <div class="form-group">
+                <label>Status: </label>
+                <label>{{getStatusLabel()}}</label>
+            </div>
+
         </div>
 
 

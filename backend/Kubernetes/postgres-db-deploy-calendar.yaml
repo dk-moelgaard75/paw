@@ -1,19 +1,20 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
-  name: postgres-calendar
+  name: postgres-db-calendar
 spec:
+  serviceName: postgres-calendar-clusterip-srv
   replicas: 1
   selector:
     matchLabels:
-      app: postgres-calendar
+      app: postgres-db-calendar
   template:
     metadata:
       labels:
-        app: postgres-calendar
+        app: postgres-db-calendar
     spec:
       containers:
-        - name: postgres-calendar
+        - name: postgres-db-calendar
           image: postgres:10.1
           ports:
             - containerPort: 5432
@@ -24,9 +25,11 @@ spec:
               value: calendar
             - name: POSTGRES_PASSWORD
               value: calendar
+            - name: PGDATA
+              value: /var/lib/postgresql/data/calendar
           volumeMounts:
-            - mountPath: /var/lib/postgresql/calendar/data
-              name: postgres-calendar-pv-claim
+            - name: postgres-calendar-pv-claim
+              mountPath: /var/lib/postgresql/calendar/data
       volumes:
       - name: postgres-calendar-pv-claim
         persistentVolumeClaim:
@@ -39,9 +42,9 @@ metadata:
 spec:
   type: ClusterIP
   selector:
-    app: postgres-calendar
+    app: postgres-db-calendar
   ports:
-  - name: postgres-calendar
+  - name: postgres-db-calendar
     protocol: TCP
     port: 5432
     targetPort: 5432 

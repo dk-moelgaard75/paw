@@ -43,7 +43,7 @@ namespace EmployeeService.Controllers
         [HttpGet("{id}",Name="GetById")]
         public ActionResult<EmployeeGetDto> GetById(int id)
         {
-            Console.WriteLine($"EmployeeService - Http GET recieved with ID: {id}");
+            PawLogger.DoLog($"EmployeeService - Http GET recieved with ID: {id}");
             Employee emp = _employeeRepository.GetById(id);
             if (emp != null)
             {
@@ -63,23 +63,23 @@ namespace EmployeeService.Controllers
                 Console.WriteLine($"employeeCreateDto is null:");
             }
             //EmployeeCreateDto tmp = JsonSerializer.Deserialize<EmployeeCreateDto>(employeeCreateDto.ToString());
-            Console.WriteLine($"Http POST recieved with data:");
-            Console.WriteLine($"{employeeCreateDto.FirstName}");
-            Console.WriteLine($"{employeeCreateDto.LastName}");
-            Console.WriteLine($"{employeeCreateDto.Email}");
-            Console.WriteLine($"{employeeCreateDto.Phone}");
-            Console.WriteLine($"{employeeCreateDto.Password}");
+            PawLogger.DoLog($"Http POST recieved with data:");
+            PawLogger.DoLog($"{employeeCreateDto.FirstName}");
+            PawLogger.DoLog($"{employeeCreateDto.LastName}");
+            PawLogger.DoLog($"{employeeCreateDto.Email}");
+            PawLogger.DoLog($"{employeeCreateDto.Phone}");
+            PawLogger.DoLog($"{employeeCreateDto.Password}");
             EmployeeGetDto epmloyeeDto = null;
             try
             {
                 //Map incomming DTO to a internal model object
                 Employee employeeModel = _mapper.Map<Employee>(employeeCreateDto);
-                Console.WriteLine($"Employee model created:");
-                Console.WriteLine($"{employeeModel.FirstName}");
-                Console.WriteLine($"{employeeModel.LastName}");
-                Console.WriteLine($"{employeeModel.Email}");
-                Console.WriteLine($"{employeeModel.Phone}");
-                Console.WriteLine($"{employeeModel.Password}");
+                PawLogger.DoLog($"Employee model created:");
+                PawLogger.DoLog($"{employeeModel.FirstName}");
+                PawLogger.DoLog($"{employeeModel.LastName}");
+                PawLogger.DoLog($"{employeeModel.Email}");
+                PawLogger.DoLog($"{employeeModel.Phone}");
+                PawLogger.DoLog($"{employeeModel.Password}");
 
                 //setting UID
                 employeeModel.UID = Guid.NewGuid();
@@ -92,12 +92,11 @@ namespace EmployeeService.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Http POST exception: {ex.Message}" );
+                PawLogger.DoLog($"Http POST exception: {ex.Message}" );
                 return StatusCode(500);
             }
             try
             {
-                System.Diagnostics.Debug.Print("RabbitMQ");
                 EmployeePublishedDto emp = _mapper.Map<EmployeePublishedDto>(epmloyeeDto);
                 _messageBusClient.PublishEmployee(emp);
             }
@@ -120,15 +119,15 @@ namespace EmployeeService.Controllers
         [HttpPut]
         public IActionResult Put([FromBody] EmployeeCreateDto employeeCreateDto)
         {
-            Console.WriteLine($"Http PUT recieved with data:");
-            Console.WriteLine($"{employeeCreateDto.Email}");
+            PawLogger.DoLog($"Http PUT recieved with data:");
+            PawLogger.DoLog($"{employeeCreateDto.Email}");
 
             Employee emp = _employeeRepository.GetByEmail(employeeCreateDto.Email);
             try
             {
                 if (emp != null)
                 {
-                    Console.WriteLine($"Found employee based on email:" + employeeCreateDto.Email);
+                    PawLogger.DoLog($"Found employee based on email:" + employeeCreateDto.Email);
                     //Map properties of src (first argument) to dest (second argument)
                     _mapper.Map(employeeCreateDto, emp);
                     _employeeRepository.Update(emp);
@@ -141,7 +140,7 @@ namespace EmployeeService.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error in EmployeeControler - Put:" + ex.Message);
+                PawLogger.DoLog("Error in EmployeeControler - Put:" + ex.Message);
                 return StatusCode(500);
             }
             return Ok();
@@ -149,7 +148,7 @@ namespace EmployeeService.Controllers
         [HttpDelete("{emplId:int}")]
         public IActionResult Delete(int emplId)
         {
-            Console.WriteLine("EmployeeController - Delete hit with ID:" + emplId);
+            PawLogger.DoLog("EmployeeController - Delete hit with ID:" + emplId);
             Employee empl = _employeeRepository.GetById(emplId);
             if (empl != null)
             {
